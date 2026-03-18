@@ -1,0 +1,1759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solutions — LUCAVERSE</title>
+    <meta name="description" content="One Platform. Seven Verticals. From homes to cities, farms to factories — LUCA brings intelligence to every space.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
+    <style>
+        /* ========== RESET & VARIABLES ========== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --black: #000000;
+            --dark: #0a0a0a;
+            --charcoal: #111111;
+            --dark-grey: #1a1a1a;
+            --mid-grey: #2a2a2a;
+            --text-grey: #888888;
+            --white: #f5f5f5;
+            --pure-white: #ffffff;
+            --accent: #b8d3c8;
+            --accent-light: #d0e3db;
+            --accent-hover: #9fbdb1;
+            --font: 'Montserrat', sans-serif;
+            --text-primary: rgba(255,255,255, 0.95);
+            --text-secondary: rgba(255,255,255, 0.72);
+            --text-tertiary: rgba(255,255,255, 0.50);
+            --text-quaternary: rgba(255,255,255, 0.35);
+        }
+
+        html {
+            background: var(--black);
+            color: var(--text-primary);
+            font-family: var(--font);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        body {
+            background: var(--black);
+            cursor: none;
+            overflow-x: hidden;
+        }
+
+        a { color: inherit; text-decoration: none; cursor: none; }
+        img { display: block; max-width: 100%; }
+        em { font-style: normal; color: var(--accent); }
+        ::selection { background: rgba(184,211,200,0.25); color: var(--pure-white); }
+
+        /* ========== FILM GRAIN ========== */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            pointer-events: none;
+            opacity: 0.15;
+            mix-blend-mode: overlay;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.5'/%3E%3C/svg%3E");
+            background-size: 256px 256px;
+        }
+
+        /* ========== SCROLL PROGRESS BAR ========== */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: var(--accent);
+            z-index: 10001;
+            transition: none;
+        }
+
+        /* ========== CUSTOM CURSOR ========== */
+        .cursor-ring {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 1.5px solid rgba(184,211,200,0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10002;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s, border-color 0.3s;
+        }
+        .cursor-ring.hover {
+            width: 60px;
+            height: 60px;
+            border-color: rgba(184,211,200,0.7);
+        }
+        .cursor-dot {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10003;
+            transform: translate(-50%, -50%);
+        }
+
+        /* ========== LOADER ========== */
+        .loader {
+            position: fixed;
+            inset: 0;
+            background: var(--black);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .loader-logo {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--black);
+            animation: heartbeat-loader 0.6s ease-in-out 3;
+        }
+        @keyframes heartbeat-loader {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(184,211,200,0.4); }
+            50% { transform: scale(1.15); box-shadow: 0 0 30px 10px rgba(184,211,200,0.2); }
+        }
+
+        /* ========== PAGE TRANSITION OVERLAY ========== */
+        .page-transition {
+            position: fixed;
+            inset: 0;
+            background: var(--black);
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* ========== NAVIGATION ========== */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 0 60px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.4s, backdrop-filter 0.4s;
+        }
+        .nav.scrolled {
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .nav-logo {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--black);
+            flex-shrink: 0;
+            animation: heartbeat-nav 0.6s ease-in-out 4;
+        }
+        @keyframes heartbeat-nav {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(184,211,200,0.4); }
+            50% { transform: scale(1.1); box-shadow: 0 0 25px 8px rgba(184,211,200,0.15); }
+        }
+        .nav-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .nav-brand-name {
+            font-size: 1.15rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            color: var(--text-primary);
+        }
+        .nav-brand-line {
+            width: 30px;
+            height: 1.5px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+        .nav-link {
+            font-size: 0.82rem;
+            font-weight: 400;
+            letter-spacing: 0.06em;
+            color: var(--text-secondary);
+            transition: color 0.3s;
+            position: relative;
+        }
+        .nav-link:hover { color: var(--text-primary); }
+        .nav-link.active { color: var(--accent); }
+        .nav-link-solutions {
+            padding: 10px 0;
+        }
+        .nav-cta {
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            padding: 12px 28px;
+            border-radius: 100px;
+            background: var(--accent);
+            color: var(--black);
+            transition: background 0.3s, transform 0.3s;
+        }
+        .nav-cta:hover {
+            background: var(--accent-light);
+            transform: translateY(-1px);
+        }
+
+        /* ========== MEGA MENU ========== */
+        .mega-menu {
+            position: absolute;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 780px;
+            background: rgba(15,15,15,0.85);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            padding: 36px 40px;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+            transform: translateX(-50%) translateY(10px);
+        }
+        .mega-menu.open {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+        }
+        .mega-menu-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .mega-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            transition: background 0.3s;
+        }
+        .mega-menu-item:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        .mega-menu-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(184,211,200,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .mega-menu-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--accent);
+            fill: none;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .mega-menu-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .mega-menu-title {
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        .mega-menu-desc {
+            font-size: 0.68rem;
+            color: var(--text-tertiary);
+            font-weight: 300;
+        }
+        .mega-menu-item:last-child {
+            grid-column: span 1;
+        }
+
+        /* ========== MOBILE NAV ========== */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            z-index: 1002;
+            padding: 10px;
+        }
+        .hamburger span {
+            width: 24px;
+            height: 1.5px;
+            background: var(--text-primary);
+            transition: transform 0.3s, opacity 0.3s;
+        }
+        .hamburger.open span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            z-index: 999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s, visibility 0.4s;
+        }
+        .mobile-menu.open {
+            opacity: 1;
+            visibility: visible;
+        }
+        .mobile-menu a {
+            font-size: 1.8rem;
+            font-weight: 200;
+            letter-spacing: -0.02em;
+            color: var(--text-secondary);
+            transition: color 0.3s;
+        }
+        .mobile-menu a:hover { color: var(--accent); }
+        .mobile-menu .mobile-solutions-sub {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-left: 20px;
+            margin-top: -10px;
+        }
+        .mobile-menu .mobile-solutions-sub a {
+            font-size: 1rem;
+            font-weight: 300;
+            color: var(--text-tertiary);
+        }
+
+        /* ========== HERO ========== */
+        .hero {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        .hero-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 120%;
+            object-fit: cover;
+            will-change: transform;
+        }
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(0,0,0,0.2) 0%,
+                rgba(0,0,0,0.3) 30%,
+                rgba(0,0,0,0.6) 60%,
+                rgba(0,0,0,0.85) 100%
+            );
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 0 40px 100px;
+            max-width: 900px;
+        }
+        .hero-label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--accent);
+            margin-bottom: 24px;
+            display: inline-block;
+        }
+        .hero-title {
+            font-size: clamp(3.5rem, 8vw, 7rem);
+            font-weight: 200;
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+            text-wrap: balance;
+            background: linear-gradient(135deg, var(--pure-white) 0%, var(--accent-light) 50%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 24px;
+        }
+        .hero-subtitle {
+            font-size: 1.15rem;
+            font-weight: 300;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        /* ========== BRAND STATEMENT ========== */
+        .brand-statement {
+            padding: 180px 40px;
+            background: var(--black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .brand-statement-text {
+            font-size: clamp(2.2rem, 4.5vw, 4rem);
+            font-weight: 200;
+            letter-spacing: -0.02em;
+            line-height: 1.3;
+            text-align: center;
+            max-width: 1000px;
+            text-wrap: balance;
+        }
+        .brand-word {
+            display: inline-block;
+            opacity: 0.12;
+            transition: opacity 0.1s;
+            margin-right: 0.25em;
+        }
+        .brand-word.active {
+            opacity: 1;
+            color: var(--text-primary);
+        }
+        .brand-word.accent-word {
+            color: var(--accent);
+        }
+
+        /* ========== SOLUTION SECTIONS ========== */
+        .solution-section {
+            position: relative;
+            width: 100%;
+            min-height: 70vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+        .solution-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 130%;
+            object-fit: cover;
+            will-change: transform;
+        }
+        .solution-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to right,
+                rgba(0,0,0,0.8) 0%,
+                rgba(0,0,0,0.6) 40%,
+                rgba(0,0,0,0.3) 100%
+            );
+        }
+        .solution-panel {
+            position: relative;
+            z-index: 2;
+            margin: 60px;
+            max-width: 560px;
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            padding: 48px;
+            overflow: hidden;
+        }
+        .solution-panel::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), rgba(184,211,200,0.06), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+        .solution-panel:hover::before { opacity: 1; }
+        .solution-number {
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--accent);
+            margin-bottom: 16px;
+        }
+        .solution-title {
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            font-weight: 200;
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+            text-wrap: balance;
+            background: linear-gradient(135deg, var(--pure-white) 0%, var(--accent-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+        }
+        .solution-desc {
+            font-size: 1rem;
+            font-weight: 300;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+        .solution-features {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 32px;
+        }
+        .solution-features li {
+            font-size: 0.9rem;
+            font-weight: 300;
+            color: var(--text-secondary);
+            padding-left: 20px;
+            position: relative;
+        }
+        .solution-features li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 8px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+        .solution-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--accent);
+            letter-spacing: 0.04em;
+            transition: gap 0.3s, color 0.3s;
+        }
+        .solution-link:hover {
+            gap: 14px;
+            color: var(--accent-light);
+        }
+        .solution-link svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        /* Alternating panel alignment */
+        .solution-section:nth-child(even) {
+            justify-content: flex-end;
+        }
+        .solution-section:nth-child(even) .solution-overlay {
+            background: linear-gradient(
+                to left,
+                rgba(0,0,0,0.8) 0%,
+                rgba(0,0,0,0.6) 40%,
+                rgba(0,0,0,0.3) 100%
+            );
+        }
+
+        /* Black spacers between solution sections */
+        .solution-spacer {
+            height: 120px;
+            background: var(--black);
+        }
+
+        /* ========== STATS BENTO GRID ========== */
+        .stats-section {
+            padding: 140px 40px;
+            background: var(--black);
+        }
+        .stats-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .stats-label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+        .stats-title {
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-weight: 200;
+            letter-spacing: -0.02em;
+            text-wrap: balance;
+            background: linear-gradient(135deg, var(--pure-white) 0%, var(--accent-light) 50%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: 200px;
+            gap: 16px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .bento-card {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), rgba(184,211,200,0.06), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+        .bento-card:hover::before { opacity: 1; }
+        .bento-large {
+            grid-column: span 2;
+            grid-row: span 2;
+        }
+        .bento-medium {
+            grid-column: span 2;
+        }
+        .bento-number {
+            font-size: clamp(3rem, 6vw, 5rem);
+            font-weight: 200;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, var(--pure-white), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        .bento-label-text {
+            font-size: 0.85rem;
+            font-weight: 400;
+            color: var(--text-tertiary);
+            letter-spacing: 0.04em;
+        }
+        .bento-large .bento-number {
+            font-size: clamp(4rem, 8vw, 7rem);
+        }
+        .bento-large .bento-label-text {
+            font-size: 1rem;
+        }
+        .bento-accent-border {
+            border-color: rgba(184,211,200,0.15);
+        }
+
+        /* ========== CTA SECTION ========== */
+        .cta-section {
+            position: relative;
+            width: 100%;
+            min-height: 70vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cta-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 130%;
+            object-fit: cover;
+            will-change: transform;
+        }
+        .cta-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(0,0,0,0.4) 0%,
+                rgba(0,0,0,0.7) 100%
+            );
+        }
+        .cta-panel {
+            position: relative;
+            z-index: 2;
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            padding: 64px 80px;
+            text-align: center;
+            max-width: 700px;
+        }
+        .cta-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 200;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            text-wrap: balance;
+            background: linear-gradient(135deg, var(--pure-white) 0%, var(--accent-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+        .cta-desc {
+            font-size: 1.05rem;
+            font-weight: 300;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            margin-bottom: 36px;
+        }
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .cta-btn-primary {
+            font-family: var(--font);
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            padding: 16px 40px;
+            border-radius: 100px;
+            background: var(--accent);
+            color: var(--black);
+            border: none;
+            cursor: none;
+            transition: background 0.3s, transform 0.3s;
+            display: inline-block;
+        }
+        .cta-btn-primary:hover {
+            background: var(--accent-light);
+            transform: translateY(-2px);
+        }
+        .cta-btn-secondary {
+            font-family: var(--font);
+            font-size: 0.85rem;
+            font-weight: 400;
+            letter-spacing: 0.06em;
+            padding: 16px 40px;
+            border-radius: 100px;
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid rgba(255,255,255,0.15);
+            cursor: none;
+            transition: border-color 0.3s, transform 0.3s;
+            display: inline-block;
+        }
+        .cta-btn-secondary:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        /* ========== FOOTER ========== */
+        .footer {
+            padding: 100px 60px 40px;
+            background: var(--dark);
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+        .footer-gradient-line {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            margin-bottom: 80px;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr 1fr;
+            gap: 60px;
+            max-width: 1200px;
+            margin: 0 auto 80px;
+        }
+        .footer-brand-desc {
+            font-size: 0.9rem;
+            font-weight: 300;
+            line-height: 1.8;
+            color: var(--text-tertiary);
+            margin-top: 20px;
+            margin-bottom: 24px;
+        }
+        .footer-social {
+            display: flex;
+            gap: 16px;
+        }
+        .footer-social a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s, border-color 0.3s;
+        }
+        .footer-social a:hover {
+            background: rgba(184,211,200,0.1);
+            border-color: rgba(184,211,200,0.2);
+        }
+        .footer-social svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--text-tertiary);
+        }
+        .footer-col-title {
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+        .footer-col-links {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .footer-col-links a {
+            font-size: 0.85rem;
+            font-weight: 300;
+            color: var(--text-tertiary);
+            transition: color 0.3s;
+        }
+        .footer-col-links a:hover { color: var(--accent); }
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .footer-copyright {
+            font-size: 0.78rem;
+            font-weight: 300;
+            color: var(--text-quaternary);
+        }
+        .footer-legal {
+            display: flex;
+            gap: 24px;
+        }
+        .footer-legal a {
+            font-size: 0.75rem;
+            font-weight: 300;
+            color: var(--text-quaternary);
+            transition: color 0.3s;
+        }
+        .footer-legal a:hover { color: var(--text-tertiary); }
+
+        .footer-brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .footer-logo-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--black);
+        }
+        .footer-logo-text {
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            color: var(--text-primary);
+        }
+
+        /* ========== REVEAL ANIMATIONS ========== */
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-up.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 1024px) {
+            .nav { padding: 0 30px; }
+            .nav-links { display: none; }
+            .hamburger { display: flex; }
+            .mobile-menu { display: flex; }
+            .mega-menu { display: none !important; }
+            .solution-panel {
+                margin: 40px 30px;
+                padding: 36px;
+                max-width: 480px;
+            }
+            .bento-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-auto-rows: 180px;
+            }
+            .bento-large {
+                grid-column: span 2;
+                grid-row: span 1;
+            }
+            .bento-medium {
+                grid-column: span 2;
+            }
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 40px;
+            }
+            .cta-panel {
+                padding: 48px 40px;
+                margin: 0 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav { padding: 0 20px; height: 70px; }
+            .nav-logo { width: 44px; height: 44px; font-size: 1rem; }
+            .nav-brand-name { font-size: 1rem; }
+            .hero-content { padding: 0 24px 60px; }
+            .hero-title { font-size: clamp(2.5rem, 10vw, 3.5rem); }
+            .hero-subtitle { font-size: 1rem; }
+            .brand-statement { padding: 100px 24px; }
+            .brand-statement-text { font-size: clamp(1.5rem, 5vw, 2.2rem); }
+            .solution-section { min-height: 60vh; align-items: flex-end; }
+            .solution-panel {
+                margin: 24px 16px;
+                padding: 28px;
+                max-width: 100%;
+            }
+            .solution-section:nth-child(even) {
+                justify-content: flex-start;
+            }
+            .solution-title { font-size: 1.6rem; }
+            .solution-spacer { height: 60px; }
+            .stats-section { padding: 80px 20px; }
+            .bento-grid {
+                grid-template-columns: 1fr 1fr;
+                grid-auto-rows: 150px;
+                gap: 12px;
+            }
+            .bento-large {
+                grid-column: span 2;
+                grid-row: span 1;
+            }
+            .cta-panel { padding: 36px 24px; }
+            .cta-title { font-size: 2rem; }
+            .footer { padding: 60px 24px 30px; }
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOADER -->
+    <div class="loader" id="loader">
+        <div class="loader-logo">L</div>
+    </div>
+
+    <!-- PAGE TRANSITION OVERLAY -->
+    <div class="page-transition" id="pageTransition"></div>
+
+    <!-- SCROLL PROGRESS BAR -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- CUSTOM CURSOR -->
+    <div class="cursor-ring" id="cursorRing"></div>
+    <div class="cursor-dot" id="cursorDot"></div>
+
+    <!-- NAVIGATION -->
+    <nav class="nav" id="nav">
+        <a href="index.html" class="nav-left" onclick="navigateTo('index.html'); return false;">
+            <div class="nav-logo">L</div>
+            <div class="nav-brand">
+                <div class="nav-brand-name">LUCAVERSE</div>
+                <div class="nav-brand-line"></div>
+            </div>
+        </a>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link" onclick="navigateTo('index.html'); return false;">Home</a>
+            <div class="nav-link-solutions-wrap" style="position:relative;">
+                <a href="solutions.html" class="nav-link nav-link-solutions active" onclick="navigateTo('solutions.html'); return false;">Solutions</a>
+                <!-- MEGA MENU -->
+                <div class="mega-menu" id="megaMenu">
+                    <div class="mega-menu-grid">
+                        <a href="home-automation.html" class="mega-menu-item" onclick="navigateTo('home-automation.html'); return false;">
+                            <div class="mega-menu-icon">
+                                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                            </div>
+                            <div class="mega-menu-text">
+                                <div class="mega-menu-title">Home Automation</div>
+                                <div class="mega-menu-desc">Smart living</div>
+                            </div>
+                        </a>
+                        <a href="building-automation.html" class="mega-menu-item" onclick="navigateTo('building-automation.html'); return false;">
+                            <div class="mega-menu-icon">
+                                <svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="9" y1="6" x2="9" y2="6.01"/><line x1="15" y1="6" x2="15" y2="6.01"/><line x1="9" y1="10" x2="9" y2="10.01"/><line x1="15" y1="10" x2="15" y2="10.01"/><line x1="9" y1="14" x2="9" y2="14.01"/><line x1="15" y1="14" x2="15" y2="14.01"/><path d="M9 22v-4h6v4"/></svg>
+                            </div>
+                            <div class="mega-menu-text">
+                                <div class="mega-menu-title">Building Automation</div>
+                                <div class="mega-menu-desc">Intelligent infrastructure</div>
+                            </div>
+                        </a>
+                        <a href="urban-intelligence.html" class="mega-menu-item" onclick="navigateTo('urban-intelligence.html'); return false;">
+                            <div class="mega-menu-icon">
+                                <svg viewBox="0 0 24 24"><line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/><polyline points="15 18 18 18 18 15"/></svg>
+                            </div>
+                            <div class="mega-menu-text">
+                                <div class="mega-menu-title">Urban Intelligence</div>
+                                <div class="mega-menu-desc">Smart city solutions</div>
+                            </div>
+                        </a>
+                        <a href="industrial-automation.html" class="mega-menu-item" onclick="navigateTo('industrial-automation.html'); return false;">
+                            <div class="mega-menu-icon">
+                                <svg viewBox="0 0 24 24"><path d="M2 20h20"/><path d="M5 20V8l5 4V8l5 4V4h4v16"/></svg>
+                            </div>
+                            <div class="mega-menu-text">
+                                <div class="mega-menu-title">Industrial</div>
+                                <div class="mega-menu-desc">Factory intelligence</div>
+                            </div>
+                        </a>
+                        <a href="agriculture-automation.html" class="mega-menu-item" onclick="navigateTo('agriculture-automation.html'); return false;">
+                            <div class="mega-menu-icon">
+                                <svg viewBox="0 0 24 24"><path d="M12 22c-4 0-8-2-8-6 0-3 2-5 5-6 1-3 4-5 7-5 0 3-1 6-4 8"/><path d="M12 22c4 0 8-2 8-6 0-3-2-5-5-6"/><line x1="12" y1="22" x2="12" y2="11"/></svg>
+                            </div>
+                            <div class="mega-menu-text">
+                                <div class="mega-menu-title">Agriculture</div>
+                                <div class="mega-menu-desc">Precision farming</div>
+                            </div>
+                        </a>
+                        <a href="energy-management.html" class="mega-menu-item" onclick="navigateTo('energy-management.html'); return false;">
+                            <div class="mega-menu-icon">
+                                <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                            </div>
+                            <div class="mega-menu-text">
+                                <div class="mega-menu-title">Energy Management</div>
+                                <div class="mega-menu-desc">Every watt measured</div>
+                            </div>
+                        </a>
+                        <a href="security-video-analytics.html" class="mega-menu-item" onclick="navigateTo('security-video-analytics.html'); return false;">
+                            <div class="mega-menu-icon">
+                                <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            </div>
+                            <div class="mega-menu-text">
+                                <div class="mega-menu-title">Security & Analytics</div>
+                                <div class="mega-menu-desc">See everything</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <a href="products.html" class="nav-link" onclick="navigateTo('products.html'); return false;">Products</a>
+            <a href="about.html" class="nav-link" onclick="navigateTo('about.html'); return false;">About</a>
+            <a href="contact.html" class="nav-link" onclick="navigateTo('contact.html'); return false;">Contact</a>
+        </div>
+        <a href="contact.html" class="nav-cta" onclick="navigateTo('contact.html'); return false;">Get a Demo</a>
+        <div class="hamburger" id="hamburger">
+            <span></span><span></span><span></span>
+        </div>
+    </nav>
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="index.html" onclick="navigateTo('index.html'); return false;">Home</a>
+        <a href="solutions.html" onclick="navigateTo('solutions.html'); return false;" style="color: var(--accent);">Solutions</a>
+        <div class="mobile-solutions-sub">
+            <a href="home-automation.html" onclick="navigateTo('home-automation.html'); return false;">Home Automation</a>
+            <a href="building-automation.html" onclick="navigateTo('building-automation.html'); return false;">Building Automation</a>
+            <a href="urban-intelligence.html" onclick="navigateTo('urban-intelligence.html'); return false;">Urban Intelligence</a>
+            <a href="industrial-automation.html" onclick="navigateTo('industrial-automation.html'); return false;">Industrial</a>
+            <a href="agriculture-automation.html" onclick="navigateTo('agriculture-automation.html'); return false;">Agriculture</a>
+            <a href="energy-management.html" onclick="navigateTo('energy-management.html'); return false;">Energy Management</a>
+            <a href="security-video-analytics.html" onclick="navigateTo('security-video-analytics.html'); return false;">Security & Analytics</a>
+        </div>
+        <a href="products.html" onclick="navigateTo('products.html'); return false;">Products</a>
+        <a href="about.html" onclick="navigateTo('about.html'); return false;">About</a>
+        <a href="contact.html" onclick="navigateTo('contact.html'); return false;">Contact</a>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- HERO -->
+    <!-- ============================================================ -->
+    <section class="hero" id="hero">
+        <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1920&q=85"
+             alt="Dramatic modern city architecture"
+             class="hero-img" id="heroImg">
+        <div class="hero-overlay"></div>
+        <div class="hero-content reveal-up">
+            <span class="hero-label">Solutions Gateway</span>
+            <h1 class="hero-title">One Platform.<br>Seven Verticals.</h1>
+            <p class="hero-subtitle">From homes to cities, farms to factories — LUCA brings intelligence to every space.</p>
+        </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- BRAND STATEMENT -->
+    <!-- ============================================================ -->
+    <section class="brand-statement" id="brandStatement">
+        <div class="brand-statement-text" id="brandText"></div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- 7 SOLUTION SECTIONS -->
+    <!-- ============================================================ -->
+
+    <!-- 1. HOME AUTOMATION -->
+    <div class="solution-spacer"></div>
+    <section class="solution-section" id="sol1">
+        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&q=85"
+             alt="Luxury smart home interior"
+             class="solution-img" data-parallax>
+        <div class="solution-overlay"></div>
+        <a href="home-automation.html" class="solution-panel reveal-up" onclick="navigateTo('home-automation.html'); return false;">
+            <div class="solution-number">01 &mdash; Home Automation</div>
+            <h2 class="solution-title">Premium Smart Home Systems</h2>
+            <p class="solution-desc">Transform residences into responsive living environments that anticipate needs, protect comfort, and simplify daily life through seamless automation.</p>
+            <ul class="solution-features">
+                <li>Intelligent lighting, climate, and blinds orchestration</li>
+                <li>Voice-first control with multi-room audio</li>
+                <li>Energy optimization with real-time consumption tracking</li>
+                <li>Security integration with smart locks and cameras</li>
+            </ul>
+            <span class="solution-link">Explore Solution <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+        </a>
+    </section>
+
+    <!-- 2. BUILDING AUTOMATION -->
+    <div class="solution-spacer"></div>
+    <section class="solution-section" id="sol2">
+        <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1600&q=85"
+             alt="Modern glass building exterior"
+             class="solution-img" data-parallax>
+        <div class="solution-overlay"></div>
+        <a href="building-automation.html" class="solution-panel reveal-up" onclick="navigateTo('building-automation.html'); return false;">
+            <div class="solution-number">02 &mdash; Building Automation</div>
+            <h2 class="solution-title">Intelligent Infrastructure</h2>
+            <p class="solution-desc">Give commercial buildings a central nervous system. Manage HVAC, lighting, access, and energy from a single intelligent platform that learns and adapts.</p>
+            <ul class="solution-features">
+                <li>BMS integration with HVAC, fire, and elevator systems</li>
+                <li>Occupancy-driven climate and lighting control</li>
+                <li>Real-time energy dashboards and anomaly alerts</li>
+                <li>Visitor management and smart access control</li>
+            </ul>
+            <span class="solution-link">Explore Solution <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+        </a>
+    </section>
+
+    <!-- 3. URBAN INTELLIGENCE -->
+    <div class="solution-spacer"></div>
+    <section class="solution-section" id="sol3">
+        <img src="https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1600&q=85"
+             alt="City skyline at night"
+             class="solution-img" data-parallax>
+        <div class="solution-overlay"></div>
+        <a href="urban-intelligence.html" class="solution-panel reveal-up" onclick="navigateTo('urban-intelligence.html'); return false;">
+            <div class="solution-number">03 &mdash; Urban Intelligence</div>
+            <h2 class="solution-title">Smart City Solutions</h2>
+            <p class="solution-desc">Deploy city-scale intelligence across infrastructure, utilities, and public spaces. Make urban ecosystems safer, more efficient, and data-driven.</p>
+            <ul class="solution-features">
+                <li>Smart street lighting with adaptive dimming</li>
+                <li>Traffic flow optimization and parking intelligence</li>
+                <li>Environmental monitoring: air quality, noise, weather</li>
+                <li>Centralized city command dashboard</li>
+            </ul>
+            <span class="solution-link">Explore Solution <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+        </a>
+    </section>
+
+    <!-- 4. INDUSTRIAL AUTOMATION -->
+    <div class="solution-spacer"></div>
+    <section class="solution-section" id="sol4">
+        <img src="https://images.unsplash.com/photo-1565793298595-6a879b1d9492?w=1600&q=85"
+             alt="Modern factory interior with machinery"
+             class="solution-img" data-parallax>
+        <div class="solution-overlay"></div>
+        <a href="industrial-automation.html" class="solution-panel reveal-up" onclick="navigateTo('industrial-automation.html'); return false;">
+            <div class="solution-number">04 &mdash; Industrial Automation</div>
+            <h2 class="solution-title">Factory Intelligence</h2>
+            <p class="solution-desc">Bring predictive awareness to manufacturing floors. Monitor equipment health, optimize processes, and reduce downtime through intelligent automation.</p>
+            <ul class="solution-features">
+                <li>Predictive maintenance with vibration and thermal sensors</li>
+                <li>Production line monitoring and OEE tracking</li>
+                <li>Environmental compliance: temperature, humidity, emissions</li>
+                <li>Safety zone enforcement and worker analytics</li>
+            </ul>
+            <span class="solution-link">Explore Solution <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+        </a>
+    </section>
+
+    <!-- 5. AGRICULTURE AUTOMATION -->
+    <div class="solution-spacer"></div>
+    <section class="solution-section" id="sol5">
+        <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1600&q=85"
+             alt="Aerial view of green farmland"
+             class="solution-img" data-parallax>
+        <div class="solution-overlay"></div>
+        <a href="agriculture-automation.html" class="solution-panel reveal-up" onclick="navigateTo('agriculture-automation.html'); return false;">
+            <div class="solution-number">05 &mdash; Agriculture Automation</div>
+            <h2 class="solution-title">Precision Farming</h2>
+            <p class="solution-desc">Turn fields into data-rich ecosystems. Soil moisture, weather patterns, irrigation cycles, and crop health — all measured, analyzed, and optimized in real time.</p>
+            <ul class="solution-features">
+                <li>Soil moisture, pH, and nutrient monitoring</li>
+                <li>Automated drip irrigation with weather intelligence</li>
+                <li>Greenhouse climate control and fertigation</li>
+                <li>Crop health analytics and yield prediction</li>
+            </ul>
+            <span class="solution-link">Explore Solution <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+        </a>
+    </section>
+
+    <!-- 6. ENERGY MANAGEMENT -->
+    <div class="solution-spacer"></div>
+    <section class="solution-section" id="sol6">
+        <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1600&q=85"
+             alt="Solar panels at sunrise"
+             class="solution-img" data-parallax>
+        <div class="solution-overlay"></div>
+        <a href="energy-management.html" class="solution-panel reveal-up" onclick="navigateTo('energy-management.html'); return false;">
+            <div class="solution-number">06 &mdash; Energy Management</div>
+            <h2 class="solution-title">Every Watt Measured</h2>
+            <p class="solution-desc">Granular energy intelligence for every circuit, every floor, every building. Identify waste, optimize loads, and track ROI on every efficiency initiative.</p>
+            <ul class="solution-features">
+                <li>Circuit-level energy metering and analytics</li>
+                <li>Solar generation monitoring and grid balancing</li>
+                <li>Demand response automation and peak shaving</li>
+                <li>Carbon footprint tracking and compliance reporting</li>
+            </ul>
+            <span class="solution-link">Explore Solution <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+        </a>
+    </section>
+
+    <!-- 7. SECURITY & VIDEO ANALYTICS -->
+    <div class="solution-spacer"></div>
+    <section class="solution-section" id="sol7">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1600&q=85"
+             alt="Dark cinematic security surveillance view"
+             class="solution-img" data-parallax>
+        <div class="solution-overlay"></div>
+        <a href="security-video-analytics.html" class="solution-panel reveal-up" onclick="navigateTo('security-video-analytics.html'); return false;">
+            <div class="solution-number">07 &mdash; Security & Video Analytics</div>
+            <h2 class="solution-title">See Everything</h2>
+            <p class="solution-desc">AI-powered surveillance that goes beyond recording. Detect anomalies, recognize patterns, count people, and trigger responses — all at the edge, in real time.</p>
+            <ul class="solution-features">
+                <li>AI video analytics: intrusion, loitering, crowd detection</li>
+                <li>License plate recognition and vehicle tracking</li>
+                <li>Integrated access control with face recognition</li>
+                <li>Centralized command center with live dashboards</li>
+            </ul>
+            <span class="solution-link">Explore Solution <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+        </a>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- STATS BENTO GRID -->
+    <!-- ============================================================ -->
+    <section class="stats-section" id="statsSection">
+        <div class="stats-header reveal-up">
+            <div class="stats-label">By the Numbers</div>
+            <h2 class="stats-title">The LUCA Ecosystem</h2>
+        </div>
+        <div class="bento-grid">
+            <div class="bento-card bento-large bento-accent-border reveal-up">
+                <div class="bento-number" data-count="7">0</div>
+                <div class="bento-label-text">Verticals</div>
+            </div>
+            <div class="bento-card reveal-up">
+                <div class="bento-number" data-count="200" data-suffix="+">0</div>
+                <div class="bento-label-text">Integrations</div>
+            </div>
+            <div class="bento-card reveal-up">
+                <div class="bento-number" data-count="50" data-suffix="+">0</div>
+                <div class="bento-label-text">Products</div>
+            </div>
+            <div class="bento-card bento-medium bento-accent-border reveal-up">
+                <div class="bento-number" style="font-size: clamp(2.5rem, 5vw, 4rem);">One</div>
+                <div class="bento-label-text">Unified Platform</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- CTA SECTION -->
+    <!-- ============================================================ -->
+    <section class="cta-section" id="ctaSection">
+        <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1600&q=85"
+             alt="Earth from space with city lights"
+             class="cta-img" data-parallax>
+        <div class="cta-overlay"></div>
+        <div class="cta-panel reveal-up">
+            <h2 class="cta-title">Find Your Solution</h2>
+            <p class="cta-desc">Every space is unique. Let us understand yours and design an intelligence layer that transforms how it operates.</p>
+            <div class="cta-buttons">
+                <a href="contact.html" class="cta-btn-primary" onclick="navigateTo('contact.html'); return false;">Get a Demo</a>
+                <a href="products.html" class="cta-btn-secondary" onclick="navigateTo('products.html'); return false;">View Products</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================ -->
+    <!-- FOOTER -->
+    <!-- ============================================================ -->
+    <footer class="footer">
+        <div class="footer-gradient-line"></div>
+        <div class="footer-grid">
+            <!-- Brand Column -->
+            <div>
+                <div class="footer-brand-logo">
+                    <div class="footer-logo-circle">L</div>
+                    <div class="footer-logo-text">LUCAVERSE</div>
+                </div>
+                <p class="footer-brand-desc">Spaces that sense, respond, and transform. We bring intelligence to homes, buildings, cities, farms, factories, and everything in between.</p>
+                <div class="footer-social">
+                    <a href="#" aria-label="LinkedIn">
+                        <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                    </a>
+                    <a href="#" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                    </a>
+                    <a href="#" aria-label="YouTube">
+                        <svg viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19.13C5.12 19.56 12 19.56 12 19.56s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/></svg>
+                    </a>
+                </div>
+            </div>
+            <!-- Solutions Column -->
+            <div>
+                <div class="footer-col-title">Solutions</div>
+                <div class="footer-col-links">
+                    <a href="home-automation.html" onclick="navigateTo('home-automation.html'); return false;">Home Automation</a>
+                    <a href="building-automation.html" onclick="navigateTo('building-automation.html'); return false;">Building Automation</a>
+                    <a href="urban-intelligence.html" onclick="navigateTo('urban-intelligence.html'); return false;">Urban Intelligence</a>
+                    <a href="industrial-automation.html" onclick="navigateTo('industrial-automation.html'); return false;">Industrial</a>
+                    <a href="agriculture-automation.html" onclick="navigateTo('agriculture-automation.html'); return false;">Agriculture</a>
+                    <a href="energy-management.html" onclick="navigateTo('energy-management.html'); return false;">Energy Management</a>
+                    <a href="security-video-analytics.html" onclick="navigateTo('security-video-analytics.html'); return false;">Security & Analytics</a>
+                </div>
+            </div>
+            <!-- Company Column -->
+            <div>
+                <div class="footer-col-title">Company</div>
+                <div class="footer-col-links">
+                    <a href="about.html" onclick="navigateTo('about.html'); return false;">About Us</a>
+                    <a href="products.html" onclick="navigateTo('products.html'); return false;">Products</a>
+                    <a href="contact.html" onclick="navigateTo('contact.html'); return false;">Contact</a>
+                    <a href="#">Careers</a>
+                </div>
+            </div>
+            <!-- Connect Column -->
+            <div>
+                <div class="footer-col-title">Connect</div>
+                <div class="footer-col-links">
+                    <a href="mailto:contact@lucaverse.ai">contact@lucaverse.ai</a>
+                    <a href="tel:+91 9992-223-890">+91 9992-223-890</a>
+                    <a href="#">Hyderabad, India</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="footer-copyright">&copy; 2026 LUCAVERSE Private Limited. All rights reserved.</div>
+            <div class="footer-legal">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ============================================================ -->
+    <!-- JAVASCRIPT -->
+    <!-- ============================================================ -->
+    <script>
+    (function() {
+        'use strict';
+
+        // ==================== LOADER ====================
+        const loader = document.getElementById('loader');
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                gsap.to(loader, {
+                    opacity: 0,
+                    duration: 0.8,
+                    ease: 'power2.inOut',
+                    onComplete: () => {
+                        loader.style.display = 'none';
+                        initAll();
+                    }
+                });
+            }, 1500);
+        });
+
+        // ==================== PAGE TRANSITION ====================
+        const pageTransition = document.getElementById('pageTransition');
+        window.navigateTo = function(url) {
+            pageTransition.style.pointerEvents = 'all';
+            gsap.to(pageTransition, {
+                opacity: 1,
+                duration: 0.4,
+                ease: 'power2.inOut',
+                onComplete: () => {
+                    window.location.href = url;
+                }
+            });
+        };
+
+        // ==================== INIT ALL ====================
+        function initAll() {
+            initLenis();
+            initCursor();
+            initNav();
+            initMegaMenu();
+            initMobileMenu();
+            initHeroParallax();
+            initBrandStatement();
+            initSolutionParallax();
+            initStatsCounters();
+            initCtaParallax();
+            initRevealAnimations();
+            initSpotlightCards();
+            initScrollProgress();
+        }
+
+        // ==================== LENIS SMOOTH SCROLL ====================
+        let lenis;
+        function initLenis() {
+            lenis = new Lenis({
+                duration: 1.2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+                orientation: 'vertical',
+                smoothWheel: true
+            });
+
+            lenis.on('scroll', ScrollTrigger.update);
+
+            gsap.ticker.add((time) => {
+                lenis.raf(time * 1000);
+            });
+            gsap.ticker.lagSmoothing(0);
+        }
+
+        // ==================== CUSTOM CURSOR ====================
+        function initCursor() {
+            const ring = document.getElementById('cursorRing');
+            const dot = document.getElementById('cursorDot');
+
+            if (window.matchMedia('(pointer: coarse)').matches) {
+                ring.style.display = 'none';
+                dot.style.display = 'none';
+                document.body.style.cursor = 'auto';
+                document.querySelectorAll('a, button').forEach(el => el.style.cursor = 'auto');
+                return;
+            }
+
+            const xTo = gsap.quickTo(ring, 'left', { duration: 0.5, ease: 'power3' });
+            const yTo = gsap.quickTo(ring, 'top', { duration: 0.5, ease: 'power3' });
+            const dxTo = gsap.quickTo(dot, 'left', { duration: 0.15, ease: 'power3' });
+            const dyTo = gsap.quickTo(dot, 'top', { duration: 0.15, ease: 'power3' });
+
+            window.addEventListener('mousemove', (e) => {
+                xTo(e.clientX);
+                yTo(e.clientY);
+                dxTo(e.clientX);
+                dyTo(e.clientY);
+            });
+
+            document.querySelectorAll('a, button, .solution-panel, .bento-card, .nav-cta, .cta-btn-primary, .cta-btn-secondary').forEach(el => {
+                el.addEventListener('mouseenter', () => ring.classList.add('hover'));
+                el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
+            });
+        }
+
+        // ==================== NAVIGATION SCROLL ====================
+        function initNav() {
+            const nav = document.getElementById('nav');
+            ScrollTrigger.create({
+                start: 60,
+                onUpdate: (self) => {
+                    if (self.scroll() > 60) {
+                        nav.classList.add('scrolled');
+                    } else {
+                        nav.classList.remove('scrolled');
+                    }
+                }
+            });
+        }
+
+        // ==================== MEGA MENU ====================
+        function initMegaMenu() {
+            const wrap = document.querySelector('.nav-link-solutions-wrap');
+            const menu = document.getElementById('megaMenu');
+            if (!wrap || !menu) return;
+
+            let timeout;
+            wrap.addEventListener('mouseenter', () => {
+                clearTimeout(timeout);
+                menu.classList.add('open');
+            });
+            wrap.addEventListener('mouseleave', () => {
+                timeout = setTimeout(() => menu.classList.remove('open'), 200);
+            });
+            menu.addEventListener('mouseenter', () => clearTimeout(timeout));
+            menu.addEventListener('mouseleave', () => {
+                timeout = setTimeout(() => menu.classList.remove('open'), 200);
+            });
+        }
+
+        // ==================== MOBILE MENU ====================
+        function initMobileMenu() {
+            const hamburger = document.getElementById('hamburger');
+            const mobileMenu = document.getElementById('mobileMenu');
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('open');
+                mobileMenu.classList.toggle('open');
+                if (mobileMenu.classList.contains('open')) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            });
+        }
+
+        // ==================== HERO PARALLAX ====================
+        function initHeroParallax() {
+            const heroImg = document.getElementById('heroImg');
+            gsap.fromTo(heroImg, { y: 0 }, {
+                y: '20%',
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '#hero',
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: 0.3
+                }
+            });
+        }
+
+        // ==================== BRAND STATEMENT (word-by-word reveal) ====================
+        function initBrandStatement() {
+            const container = document.getElementById('brandText');
+            const sentence = "LUCA doesn't just connect devices. It orchestrates entire ecosystems.";
+            const words = sentence.split(' ');
+            const accentWords = ['LUCA', 'orchestrates', 'ecosystems.'];
+
+            container.innerHTML = '';
+            words.forEach(word => {
+                const span = document.createElement('span');
+                span.classList.add('brand-word');
+                if (accentWords.includes(word)) {
+                    span.classList.add('accent-word');
+                }
+                span.textContent = word;
+                container.appendChild(span);
+            });
+
+            const wordEls = container.querySelectorAll('.brand-word');
+
+            gsap.to(wordEls, {
+                opacity: 1,
+                stagger: 0.08,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '#brandStatement',
+                    start: 'top 70%',
+                    end: 'bottom 30%',
+                    scrub: true
+                },
+                onUpdate: function() {
+                    wordEls.forEach(w => {
+                        if (parseFloat(w.style.opacity || gsap.getProperty(w, 'opacity')) > 0.5) {
+                            w.classList.add('active');
+                        } else {
+                            w.classList.remove('active');
+                        }
+                    });
+                }
+            });
+        }
+
+        // ==================== SOLUTION SECTION PARALLAX ====================
+        function initSolutionParallax() {
+            document.querySelectorAll('.solution-img[data-parallax]').forEach(img => {
+                gsap.fromTo(img, { y: '-10%' }, {
+                    y: '10%',
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: img.closest('.solution-section'),
+                        start: 'top bottom',
+                        end: 'bottom top',
+                        scrub: 0.3
+                    }
+                });
+            });
+        }
+
+        // ==================== STATS COUNTERS ====================
+        function initStatsCounters() {
+            document.querySelectorAll('.bento-number[data-count]').forEach(el => {
+                const target = parseInt(el.dataset.count);
+                const suffix = el.dataset.suffix || '';
+                const obj = { val: 0 };
+
+                ScrollTrigger.create({
+                    trigger: el,
+                    start: 'top 80%',
+                    once: true,
+                    onEnter: () => {
+                        gsap.to(obj, {
+                            val: target,
+                            duration: 2,
+                            ease: 'power2.out',
+                            onUpdate: () => {
+                                el.textContent = Math.round(obj.val) + suffix;
+                            }
+                        });
+                    }
+                });
+            });
+        }
+
+        // ==================== CTA PARALLAX ====================
+        function initCtaParallax() {
+            const ctaImg = document.querySelector('.cta-img[data-parallax]');
+            if (!ctaImg) {
+                const img = document.querySelector('.cta-img');
+                if (img) {
+                    gsap.fromTo(img, { y: '-10%' }, {
+                        y: '10%',
+                        ease: 'none',
+                        scrollTrigger: {
+                            trigger: '#ctaSection',
+                            start: 'top bottom',
+                            end: 'bottom top',
+                            scrub: 0.3
+                        }
+                    });
+                }
+            }
+        }
+
+        // ==================== REVEAL ANIMATIONS ====================
+        function initRevealAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const el = entry.target;
+                        const delay = el.dataset.delay || 0;
+                        setTimeout(() => {
+                            el.classList.add('revealed');
+                        }, delay);
+                        observer.unobserve(el);
+                    }
+                });
+            }, { threshold: 0.15 });
+
+            document.querySelectorAll('.reveal-up').forEach((el, i) => {
+                // Stagger children within bento grid
+                const parent = el.closest('.bento-grid');
+                if (parent) {
+                    el.dataset.delay = i * 100;
+                }
+                observer.observe(el);
+            });
+        }
+
+        // ==================== SPOTLIGHT CARDS ====================
+        function initSpotlightCards() {
+            document.querySelectorAll('.solution-panel, .bento-card, .glass-card').forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    card.style.setProperty('--mx', (e.clientX - rect.left) + 'px');
+                    card.style.setProperty('--my', (e.clientY - rect.top) + 'px');
+                });
+            });
+        }
+
+        // ==================== SCROLL PROGRESS BAR ====================
+        function initScrollProgress() {
+            const bar = document.getElementById('scrollProgress');
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.scrollY;
+                const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const progress = (scrollTop / docHeight) * 100;
+                bar.style.width = progress + '%';
+            });
+        }
+
+    })();
+    </script>
+</body>
+</html>

@@ -1,11 +1,1953 @@
 <!DOCTYPE html>
-  <html lang="en">
-  <head>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>lucaverse.ai</title>
-  </head>
-  <body>
-    <h1>Coming soon</h1>
-  </body>
-  </html>
+    <title>LUCAVERSE — Spaces That Sense, Respond & Transform</title>
+    <meta name="description" content="LUCAVERSE delivers intelligent automation for homes, buildings, cities, industries, agriculture, and energy. One platform. Seven verticals. Infinite intelligence.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* =========================================
+           CSS RESET + VARIABLES
+           ========================================= */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --black: #000000;
+            --dark: #0a0a0a;
+            --charcoal: #111111;
+            --dark-grey: #1a1a1a;
+            --mid-grey: #2a2a2a;
+            --text-grey: #888888;
+            --white: #f5f5f5;
+            --pure-white: #ffffff;
+            --accent: #b8d3c8;
+            --accent-light: #d0e3db;
+            --accent-hover: #9fbdb1;
+            --font: 'Montserrat', sans-serif;
+            --text-primary: rgba(255,255,255, 0.95);
+            --text-secondary: rgba(255,255,255, 0.72);
+            --text-tertiary: rgba(255,255,255, 0.50);
+            --text-quaternary: rgba(255,255,255, 0.35);
+        }
+        html { font-size: 16px; scroll-behavior: auto; }
+        body {
+            font-family: var(--font);
+            background: var(--black);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            cursor: none;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-weight: 300;
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+        a { text-decoration: none; color: inherit; cursor: none; }
+        button { cursor: none; font-family: var(--font); }
+        img { display: block; max-width: 100%; }
+        em { font-style: normal; color: var(--accent); }
+        ul { list-style: none; }
+        h1, h2, h3, h4, h5, h6 { text-wrap: balance; }
+        h1 {
+            font-size: clamp(3.5rem, 8vw, 7rem);
+            font-weight: 200;
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+        }
+        h2 {
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-weight: 200;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+        h3 {
+            font-size: clamp(1.5rem, 2.5vw, 2rem);
+            font-weight: 300;
+            line-height: 1.3;
+        }
+        p {
+            font-size: 1.05rem;
+            font-weight: 300;
+            line-height: 1.8;
+        }
+        .label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--accent);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, var(--pure-white) 0%, var(--accent) 50%, var(--pure-white) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* =========================================
+           LOADER
+           ========================================= */
+        .loader {
+            position: fixed;
+            inset: 0;
+            z-index: 100000;
+            background: var(--black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .loader-logo {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--charcoal) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: heartbeatGlow 0.8s ease-in-out 3;
+        }
+        .loader-logo span {
+            font-family: var(--font);
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            color: var(--black);
+        }
+        @keyframes heartbeatGlow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(184,211,200,0); transform: scale(1); }
+            15% { box-shadow: 0 0 30px 10px rgba(184,211,200,0.4); transform: scale(1.1); }
+            30% { box-shadow: 0 0 10px 5px rgba(184,211,200,0.15); transform: scale(1); }
+            45% { box-shadow: 0 0 25px 8px rgba(184,211,200,0.35); transform: scale(1.05); }
+            60% { box-shadow: 0 0 0 0 rgba(184,211,200,0); transform: scale(1); }
+        }
+
+        /* =========================================
+           CUSTOM CURSOR
+           ========================================= */
+        .cursor-ring {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 1.5px solid rgba(184,211,200,0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 100002;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+        }
+        .cursor-ring.hover {
+            width: 60px;
+            height: 60px;
+            border-color: var(--accent);
+        }
+        .cursor-dot {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 100003;
+            transform: translate(-50%, -50%);
+        }
+
+        /* =========================================
+           SCROLL PROGRESS BAR
+           ========================================= */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--accent);
+            z-index: 100001;
+            transform-origin: left;
+            transform: scaleX(0);
+            width: 100%;
+        }
+
+        /* =========================================
+           FILM GRAIN
+           ========================================= */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            pointer-events: none;
+            opacity: 0.15;
+            mix-blend-mode: overlay;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+            background-size: 200px 200px;
+        }
+
+        /* =========================================
+           PAGE TRANSITION OVERLAY
+           ========================================= */
+        .page-transition {
+            position: fixed;
+            inset: 0;
+            background: var(--black);
+            z-index: 99998;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        .page-transition.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* =========================================
+           NAVIGATION
+           ========================================= */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 10000;
+            padding: 20px 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.4s ease, backdrop-filter 0.4s ease, padding 0.3s ease;
+        }
+        .nav.scrolled {
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 14px 48px;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .nav-logo-circle {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--charcoal) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            animation: heartbeatGlow 0.8s ease-in-out 0.5s 1;
+        }
+        .nav-logo-circle span {
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 0.05em;
+            color: var(--black);
+        }
+        .nav-logo-text {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .nav-logo-text .brand-name {
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            color: var(--text-primary);
+        }
+        .nav-logo-line {
+            width: 32px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+            border-radius: 2px;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 36px;
+        }
+        .nav-links > a,
+        .nav-solutions > .nav-solutions-trigger {
+            font-size: 0.82rem;
+            font-weight: 400;
+            letter-spacing: 0.06em;
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
+            text-transform: uppercase;
+        }
+        .nav-links > a:hover,
+        .nav-solutions > .nav-solutions-trigger:hover { color: var(--text-primary); }
+        .nav-links > a.active { color: var(--accent); }
+
+        /* Solutions dropdown */
+        .nav-solutions {
+            position: relative;
+        }
+        .nav-solutions .nav-solutions-trigger {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: none;
+        }
+        .nav-solutions .nav-solutions-trigger svg {
+            width: 10px;
+            height: 10px;
+            transition: transform 0.3s ease;
+        }
+        .nav-solutions:hover .nav-solutions-trigger svg {
+            transform: rotate(180deg);
+        }
+        .mega-menu {
+            position: absolute;
+            top: calc(100% + 20px);
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            width: 780px;
+            background: rgba(15,15,15,0.92);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            padding: 36px 40px;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.35s ease, transform 0.35s ease, visibility 0.35s ease;
+        }
+        .nav-solutions:hover .mega-menu {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: all;
+            transform: translateX(-50%) translateY(0);
+        }
+        .mega-menu-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .mega-menu-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            transition: background 0.3s ease;
+        }
+        .mega-menu-item:hover {
+            background: rgba(255,255,255,0.04);
+        }
+        .mega-menu-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(184,211,200,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .mega-menu-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--accent);
+            fill: none;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .mega-menu-text h4 {
+            font-size: 0.82rem;
+            font-weight: 500;
+            margin-bottom: 3px;
+            color: var(--text-primary);
+        }
+        .mega-menu-text p {
+            font-size: 0.68rem;
+            font-weight: 300;
+            line-height: 1.4;
+            color: var(--text-tertiary);
+        }
+
+        /* CTA button in nav */
+        .nav-cta {
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            padding: 10px 28px;
+            border-radius: 100px;
+            background: var(--accent);
+            color: var(--black);
+            border: none;
+            text-transform: uppercase;
+            transition: background 0.3s ease, transform 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+        }
+        .nav-cta:hover {
+            background: var(--accent-hover);
+            transform: scale(1.03);
+        }
+
+        /* Mobile hamburger */
+        .nav-hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            background: none;
+            border: none;
+            padding: 8px;
+            z-index: 10002;
+        }
+        .nav-hamburger span {
+            width: 24px;
+            height: 1.5px;
+            background: var(--text-primary);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            display: block;
+        }
+        .nav-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+        .nav-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+        /* Mobile overlay menu */
+        .mobile-menu {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.97);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 10001;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 28px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        .mobile-menu.open {
+            opacity: 1;
+            visibility: visible;
+        }
+        .mobile-menu > a {
+            font-size: 1.8rem;
+            font-weight: 200;
+            letter-spacing: 0.05em;
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
+        }
+        .mobile-menu > a:hover { color: var(--accent); }
+        .mobile-solutions-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+        .mobile-solutions-group > a:first-child {
+            font-size: 1.8rem;
+            font-weight: 200;
+            color: var(--text-secondary);
+        }
+        .mobile-solutions-sub {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease;
+            padding: 0;
+        }
+        .mobile-solutions-sub.open {
+            max-height: 400px;
+            padding: 8px 0;
+        }
+        .mobile-solutions-sub a {
+            font-size: 1rem;
+            font-weight: 300;
+            color: var(--text-tertiary);
+            transition: color 0.3s ease;
+        }
+        .mobile-solutions-sub a:hover { color: var(--accent); }
+
+        /* =========================================
+           HERO SECTION
+           ========================================= */
+        .hero {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            min-height: 600px;
+            overflow: hidden;
+        }
+        .hero-slides {
+            position: absolute;
+            inset: 0;
+        }
+        .hero-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: none;
+        }
+        .hero-slide.active { opacity: 1; }
+        .hero-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .hero-slide::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(0,0,0,0.45) 0%,
+                rgba(0,0,0,0.15) 35%,
+                rgba(0,0,0,0.25) 65%,
+                rgba(0,0,0,0.85) 100%
+            );
+        }
+        .hero-content {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 32px;
+        }
+        .hero-label {
+            margin-bottom: 24px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .hero-title {
+            max-width: 1000px;
+            margin-bottom: 24px;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        .hero-subtitle {
+            font-size: clamp(1rem, 1.5vw, 1.2rem);
+            font-weight: 300;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin-bottom: 48px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .hero-ctas {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .btn-accent {
+            font-family: var(--font);
+            font-size: 0.82rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            padding: 16px 40px;
+            border-radius: 100px;
+            background: var(--accent);
+            color: var(--black);
+            border: none;
+            text-transform: uppercase;
+            transition: background 0.3s ease, transform 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+        }
+        .btn-accent:hover {
+            background: var(--accent-hover);
+            transform: scale(1.03);
+        }
+        .btn-outline {
+            font-family: var(--font);
+            font-size: 0.82rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            padding: 16px 40px;
+            border-radius: 100px;
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid rgba(255,255,255,0.2);
+            text-transform: uppercase;
+            transition: border-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+        }
+        .btn-outline:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: scale(1.03);
+        }
+
+        /* Hero progress indicators */
+        .hero-progress {
+            position: absolute;
+            bottom: 48px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            display: flex;
+            gap: 12px;
+        }
+        .hero-progress-bar {
+            width: 60px;
+            height: 3px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 3px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .hero-progress-bar .fill {
+            width: 0%;
+            height: 100%;
+            background: var(--accent);
+            border-radius: 3px;
+        }
+
+        /* =========================================
+           BRAND STATEMENT SECTION
+           ========================================= */
+        .brand-statement {
+            padding: 180px 48px;
+            background: var(--black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+        }
+        .brand-statement-text {
+            font-size: clamp(2.2rem, 4.5vw, 4rem);
+            font-weight: 200;
+            letter-spacing: -0.02em;
+            line-height: 1.3;
+            max-width: 900px;
+            text-align: center;
+        }
+        .brand-statement-text .word {
+            display: inline-block;
+            opacity: 0.12;
+            transition: none;
+            margin-right: 0.25em;
+        }
+
+        /* =========================================
+           FULL-BLEED IMAGE BREAKER
+           ========================================= */
+        .image-breaker {
+            position: relative;
+            width: 100%;
+            height: 60vh;
+            overflow: hidden;
+        }
+        .image-breaker img {
+            width: 100%;
+            height: 130%;
+            object-fit: cover;
+            position: absolute;
+            top: -15%;
+            left: 0;
+            will-change: transform;
+        }
+        .image-breaker::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(0,0,0,0.3) 0%,
+                rgba(0,0,0,0.1) 50%,
+                rgba(0,0,0,0.5) 100%
+            );
+        }
+        .image-breaker-content {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 48px;
+        }
+        .image-breaker-glass {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            padding: 48px 64px;
+            text-align: center;
+            max-width: 700px;
+        }
+        .image-breaker-glass h3 {
+            margin-bottom: 12px;
+        }
+        .image-breaker-glass p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* =========================================
+           BENTO DOMAIN CARDS
+           ========================================= */
+        .domains-section {
+            padding: 180px 48px;
+            background: var(--black);
+        }
+        .domains-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+        .domains-header .label {
+            margin-bottom: 20px;
+            display: block;
+        }
+        .domains-header h2 {
+            margin-bottom: 20px;
+        }
+        .domains-header p {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: 220px;
+            gap: 16px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .bento-large {
+            grid-column: span 2;
+            grid-row: span 2;
+        }
+        .bento-medium {
+            grid-column: span 2;
+            grid-row: span 1;
+        }
+        .bento-small {
+            grid-column: span 1;
+            grid-row: span 1;
+        }
+        .glass-card {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: border-color 0.4s ease, transform 0.3s ease;
+        }
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), rgba(184,211,200,0.06), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+        .glass-card:hover::before { opacity: 1; }
+        .glass-card:hover {
+            border-color: rgba(184,211,200,0.15);
+            transform: translateY(-2px);
+        }
+        .glass-card .card-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 20px;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+        .bento-small .card-icon {
+            width: 36px;
+            height: 36px;
+            margin-bottom: 14px;
+        }
+        .glass-card .card-title {
+            font-size: 1.3rem;
+            font-weight: 400;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+        .bento-small .card-title {
+            font-size: 1.05rem;
+        }
+        .glass-card .card-desc {
+            font-size: 0.9rem;
+            font-weight: 300;
+            line-height: 1.7;
+            color: var(--text-tertiary);
+            flex-grow: 1;
+        }
+        .bento-small .card-desc {
+            font-size: 0.82rem;
+            line-height: 1.5;
+        }
+        .glass-card .card-link {
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: var(--accent);
+            letter-spacing: 0.05em;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 16px;
+            transition: gap 0.3s ease;
+            text-transform: uppercase;
+        }
+        .glass-card:hover .card-link { gap: 12px; }
+
+        /* =========================================
+           STATS DASHBOARD
+           ========================================= */
+        .stats-section {
+            padding: 180px 48px;
+            background: var(--black);
+        }
+        .stats-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+        .stats-header .label {
+            display: block;
+            margin-bottom: 20px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            padding: 48px 36px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), rgba(184,211,200,0.06), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+        .stat-card:hover::before { opacity: 1; }
+        .stat-number {
+            font-size: clamp(2.8rem, 4vw, 3.8rem);
+            font-weight: 200;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+        .stat-suffix {
+            font-size: clamp(1.5rem, 2vw, 2rem);
+            font-weight: 200;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+            letter-spacing: 0.03em;
+        }
+        .stat-sublabel {
+            font-size: 0.7rem;
+            font-weight: 300;
+            color: var(--text-quaternary);
+            margin-top: 6px;
+        }
+
+        /* =========================================
+           CTA SECTION
+           ========================================= */
+        .cta-section {
+            position: relative;
+            width: 100%;
+            height: 70vh;
+            min-height: 450px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cta-section img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 130%;
+            object-fit: cover;
+            top: -15%;
+            will-change: transform;
+        }
+        .cta-section::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+        }
+        .cta-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 0 32px;
+        }
+        .cta-content .label {
+            display: block;
+            margin-bottom: 20px;
+        }
+        .cta-content h2 {
+            margin-bottom: 20px;
+        }
+        .cta-content p {
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            max-width: 520px;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 1.1rem;
+        }
+
+        /* =========================================
+           FOOTER
+           ========================================= */
+        .footer {
+            padding: 100px 48px 40px;
+            background: var(--dark);
+        }
+        .footer-gradient-line {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            margin-bottom: 80px;
+            border-radius: 2px;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: 60px;
+            max-width: 1200px;
+            margin: 0 auto 80px;
+        }
+        .footer-brand .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .footer-brand .footer-logo-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--charcoal) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .footer-brand .footer-logo-circle span {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--black);
+        }
+        .footer-brand .footer-brand-name {
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+        }
+        .footer-brand p {
+            font-size: 0.88rem;
+            color: var(--text-tertiary);
+            line-height: 1.7;
+            margin-bottom: 24px;
+            max-width: 300px;
+        }
+        .footer-social {
+            display: flex;
+            gap: 12px;
+        }
+        .footer-social a {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: border-color 0.3s ease, background 0.3s ease;
+        }
+        .footer-social a:hover {
+            border-color: var(--accent);
+            background: rgba(184,211,200,0.08);
+        }
+        .footer-social a svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--text-tertiary);
+            transition: fill 0.3s ease;
+        }
+        .footer-social a:hover svg { fill: var(--accent); }
+        .footer-col h4 {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+        .footer-col ul { display: flex; flex-direction: column; gap: 12px; }
+        .footer-col ul li a {
+            font-size: 0.88rem;
+            font-weight: 300;
+            color: var(--text-tertiary);
+            transition: color 0.3s ease;
+        }
+        .footer-col ul li a:hover { color: var(--accent); }
+        .footer-connect-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .footer-connect-item svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--accent);
+            fill: none;
+            stroke-width: 1.5;
+            flex-shrink: 0;
+            margin-top: 3px;
+        }
+        .footer-connect-item span {
+            font-size: 0.88rem;
+            font-weight: 300;
+            color: var(--text-tertiary);
+            line-height: 1.5;
+        }
+        .footer-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 32px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .footer-bottom span {
+            font-size: 0.78rem;
+            font-weight: 300;
+            color: var(--text-quaternary);
+        }
+        .footer-bottom-links {
+            display: flex;
+            gap: 24px;
+        }
+        .footer-bottom-links a {
+            font-size: 0.78rem;
+            font-weight: 300;
+            color: var(--text-quaternary);
+            transition: color 0.3s ease;
+        }
+        .footer-bottom-links a:hover { color: var(--accent); }
+
+        /* =========================================
+           REVEAL ANIMATIONS
+           ========================================= */
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-up.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* =========================================
+           RESPONSIVE
+           ========================================= */
+        @media (max-width: 1024px) {
+            .nav { padding: 16px 28px; }
+            .nav.scrolled { padding: 12px 28px; }
+            .nav-links { display: none; }
+            .nav-cta.desktop-cta { display: none; }
+            .nav-hamburger { display: flex; }
+            .mega-menu { display: none; }
+            .bento-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-auto-rows: 200px;
+            }
+            .bento-large {
+                grid-column: span 2;
+                grid-row: span 2;
+            }
+            .bento-medium {
+                grid-column: span 2;
+                grid-row: span 1;
+            }
+            .bento-small {
+                grid-column: span 1;
+                grid-row: span 1;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .footer-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 40px;
+            }
+            .domains-section { padding: 120px 28px; }
+            .stats-section { padding: 120px 28px; }
+            .brand-statement { padding: 140px 28px; }
+        }
+        @media (max-width: 768px) {
+            .nav { padding: 14px 20px; }
+            .nav.scrolled { padding: 10px 20px; }
+            .nav-logo-circle { width: 44px; height: 44px; }
+            .nav-logo-circle span { font-size: 0.95rem; }
+            .nav-logo-text .brand-name { font-size: 0.95rem; }
+            .hero-title { max-width: 90%; }
+            .hero-ctas { flex-direction: column; align-items: center; gap: 12px; }
+            .brand-statement { padding: 100px 20px; min-height: 50vh; }
+            .brand-statement-text { font-size: clamp(1.8rem, 5vw, 3rem); }
+            .bento-grid {
+                grid-template-columns: 1fr;
+                grid-auto-rows: auto;
+            }
+            .bento-large, .bento-medium, .bento-small {
+                grid-column: span 1;
+                grid-row: span 1;
+            }
+            .glass-card { padding: 32px; min-height: 200px; }
+            .domains-section { padding: 80px 20px; }
+            .stats-section { padding: 80px 20px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .stat-card { padding: 32px 20px; }
+            .image-breaker { height: 45vh; }
+            .image-breaker-glass { padding: 32px; margin: 0 16px; }
+            .cta-section { height: 60vh; }
+            .footer { padding: 60px 20px 30px; }
+            .footer-grid { grid-template-columns: 1fr; gap: 36px; }
+            .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+            .footer-bottom-links { justify-content: center; }
+        }
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr; }
+            .hero h1, .hero-title { font-size: clamp(2rem, 7vw, 3rem); }
+        }
+        @media (hover: none) {
+            .cursor-ring, .cursor-dot { display: none !important; }
+            body { cursor: auto; }
+            a, button { cursor: pointer; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOADER -->
+    <div class="loader" id="loader">
+        <div class="loader-logo">
+            <span>L</span>
+        </div>
+    </div>
+
+    <!-- CUSTOM CURSOR -->
+    <div class="cursor-ring" id="cursorRing"></div>
+    <div class="cursor-dot" id="cursorDot"></div>
+
+    <!-- SCROLL PROGRESS BAR -->
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- PAGE TRANSITION OVERLAY -->
+    <div class="page-transition" id="pageTransition"></div>
+
+    <!-- NAVIGATION -->
+    <nav class="nav" id="nav">
+        <a href="index.html" class="nav-logo" onclick="navigateTo(event, 'index.html')">
+            <div class="nav-logo-circle"><span>L</span></div>
+            <div class="nav-logo-text">
+                <span class="brand-name">LUCAVERSE</span>
+                <div class="nav-logo-line"></div>
+            </div>
+        </a>
+        <div class="nav-links">
+            <a href="index.html" class="active" onclick="navigateTo(event, 'index.html')">Home</a>
+            <div class="nav-solutions">
+                <a href="solutions.html" class="nav-solutions-trigger" onclick="navigateTo(event, 'solutions.html')">
+                    Solutions
+                    <svg viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </a>
+                <div class="mega-menu">
+                    <div class="mega-menu-grid">
+                        <a href="home-automation.html" class="mega-menu-item" onclick="navigateTo(event, 'home-automation.html')">
+                            <div class="mega-menu-icon">
+                                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                            </div>
+                            <div class="mega-menu-text">
+                                <h4>Home Automation</h4>
+                                <p>Luxury living, intelligently</p>
+                            </div>
+                        </a>
+                        <a href="building-automation.html" class="mega-menu-item" onclick="navigateTo(event, 'building-automation.html')">
+                            <div class="mega-menu-icon">
+                                <svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
+                            </div>
+                            <div class="mega-menu-text">
+                                <h4>Building Automation</h4>
+                                <p>Commercial intelligence at scale</p>
+                            </div>
+                        </a>
+                        <a href="urban-intelligence.html" class="mega-menu-item" onclick="navigateTo(event, 'urban-intelligence.html')">
+                            <div class="mega-menu-icon">
+                                <svg viewBox="0 0 24 24"><rect x="1" y="6" width="5" height="16"/><rect x="7" y="2" width="5" height="20"/><rect x="13" y="8" width="5" height="14"/><rect x="19" y="4" width="4" height="18"/></svg>
+                            </div>
+                            <div class="mega-menu-text">
+                                <h4>Urban Intelligence</h4>
+                                <p>Smart cities, smarter decisions</p>
+                            </div>
+                        </a>
+                        <a href="industrial-automation.html" class="mega-menu-item" onclick="navigateTo(event, 'industrial-automation.html')">
+                            <div class="mega-menu-icon">
+                                <svg viewBox="0 0 24 24"><path d="M2 20V8l5 4V8l5 4V4h10v16z"/></svg>
+                            </div>
+                            <div class="mega-menu-text">
+                                <h4>Industrial Automation</h4>
+                                <p>Factory floors, reimagined</p>
+                            </div>
+                        </a>
+                        <a href="agriculture-automation.html" class="mega-menu-item" onclick="navigateTo(event, 'agriculture-automation.html')">
+                            <div class="mega-menu-icon">
+                                <svg viewBox="0 0 24 24"><path d="M12 22V14"/><path d="M12 14c0-5 5-9 5-9s-1 5-5 9z"/><path d="M12 14c0-5-5-9-5-9s1 5 5 9z"/><path d="M7 22h10"/></svg>
+                            </div>
+                            <div class="mega-menu-text">
+                                <h4>Agriculture Automation</h4>
+                                <p>Precision farming, maximized yield</p>
+                            </div>
+                        </a>
+                        <a href="energy-management.html" class="mega-menu-item" onclick="navigateTo(event, 'energy-management.html')">
+                            <div class="mega-menu-icon">
+                                <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                            </div>
+                            <div class="mega-menu-text">
+                                <h4>Energy Management</h4>
+                                <p>Optimize every watt</p>
+                            </div>
+                        </a>
+                        <a href="security-video-analytics.html" class="mega-menu-item" onclick="navigateTo(event, 'security-video-analytics.html')">
+                            <div class="mega-menu-icon">
+                                <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            </div>
+                            <div class="mega-menu-text">
+                                <h4>Security & Analytics</h4>
+                                <p>See everything, miss nothing</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <a href="products.html" onclick="navigateTo(event, 'products.html')">Products</a>
+            <a href="about.html" onclick="navigateTo(event, 'about.html')">About</a>
+            <a href="contact.html" onclick="navigateTo(event, 'contact.html')">Contact</a>
+        </div>
+        <a href="contact.html" class="nav-cta desktop-cta" onclick="navigateTo(event, 'contact.html')">Get a Demo</a>
+        <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="index.html" onclick="navigateTo(event, 'index.html')">Home</a>
+        <div class="mobile-solutions-group">
+            <a href="#" id="mobileSolutionsToggle">Solutions</a>
+            <div class="mobile-solutions-sub" id="mobileSolutionsSub">
+                <a href="home-automation.html" onclick="navigateTo(event, 'home-automation.html')">Home Automation</a>
+                <a href="building-automation.html" onclick="navigateTo(event, 'building-automation.html')">Building Automation</a>
+                <a href="urban-intelligence.html" onclick="navigateTo(event, 'urban-intelligence.html')">Urban Intelligence</a>
+                <a href="industrial-automation.html" onclick="navigateTo(event, 'industrial-automation.html')">Industrial Automation</a>
+                <a href="agriculture-automation.html" onclick="navigateTo(event, 'agriculture-automation.html')">Agriculture Automation</a>
+                <a href="energy-management.html" onclick="navigateTo(event, 'energy-management.html')">Energy Management</a>
+                <a href="security-video-analytics.html" onclick="navigateTo(event, 'security-video-analytics.html')">Security & Analytics</a>
+            </div>
+        </div>
+        <a href="products.html" onclick="navigateTo(event, 'products.html')">Products</a>
+        <a href="about.html" onclick="navigateTo(event, 'about.html')">About</a>
+        <a href="contact.html" onclick="navigateTo(event, 'contact.html')">Contact</a>
+        <a href="contact.html" class="btn-accent" style="margin-top:16px; font-size:1rem;" onclick="navigateTo(event, 'contact.html')">Get a Demo</a>
+    </div>
+
+    <!-- ============================================
+         HERO SECTION — Multi-image crossfade slideshow
+         ============================================ -->
+    <section class="hero" id="hero">
+        <div class="hero-slides">
+            <div class="hero-slide active" data-index="0">
+                <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&q=85" alt="Luxury smart home interior with warm lighting and modern furniture">
+            </div>
+            <div class="hero-slide" data-index="1">
+                <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1920&q=85" alt="Modern glass building exterior reflecting golden sunset light">
+            </div>
+            <div class="hero-slide" data-index="2">
+                <img src="https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=1920&q=85" alt="City skyline illuminated at night with lights reflecting on water">
+            </div>
+            <div class="hero-slide" data-index="3">
+                <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1920&q=85" alt="Aerial view of lush green farmland stretching to the horizon at golden hour">
+            </div>
+        </div>
+        <div class="hero-content">
+            <span class="label hero-label">Intelligent Automation Platform</span>
+            <h1 class="gradient-text hero-title">Spaces That Sense, Respond & Transform</h1>
+            <p class="hero-subtitle">From homes to cities, farms to factories — one platform that gives every space the power to think.</p>
+            <div class="hero-ctas">
+                <a href="solutions.html" class="btn-accent" onclick="navigateTo(event, 'solutions.html')">Explore Solutions</a>
+                <a href="contact.html" class="btn-outline" onclick="navigateTo(event, 'contact.html')">Get a Demo</a>
+            </div>
+        </div>
+        <div class="hero-progress">
+            <div class="hero-progress-bar active" data-index="0"><div class="fill"></div></div>
+            <div class="hero-progress-bar" data-index="1"><div class="fill"></div></div>
+            <div class="hero-progress-bar" data-index="2"><div class="fill"></div></div>
+            <div class="hero-progress-bar" data-index="3"><div class="fill"></div></div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         BRAND STATEMENT — Scroll-driven word reveal
+         ============================================ -->
+    <section class="brand-statement" id="brandStatement">
+        <p class="brand-statement-text" id="brandText"></p>
+    </section>
+
+    <!-- ============================================
+         FULL-BLEED IMAGE BREAKER 1
+         ============================================ -->
+    <section class="image-breaker" id="breaker1">
+        <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1600&q=85" alt="Stunning modern architectural interior with dramatic natural lighting and glass">
+        <div class="image-breaker-content">
+            <div class="image-breaker-glass reveal-up">
+                <span class="label" style="display:block; margin-bottom:14px;">Our Philosophy</span>
+                <h3 class="gradient-text">Intelligence Woven Into Architecture</h3>
+                <p>Technology should disappear into the walls, the light, the air. You should never see it — only feel it.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         6 DOMAIN BENTO CARDS
+         ============================================ -->
+    <section class="domains-section" id="domains">
+        <div class="domains-header reveal-up">
+            <span class="label">Seven Verticals. One Platform.</span>
+            <h2 class="gradient-text">Where Intelligence Lives</h2>
+            <p>From the intimacy of a living room to the scale of a city grid — LUCAVERSE adapts to every space.</p>
+        </div>
+        <div class="bento-grid">
+            <!-- Large: Home Automation (span 2 cols, 2 rows) -->
+            <a href="home-automation.html" class="glass-card bento-large reveal-up" onclick="navigateTo(event, 'home-automation.html')">
+                <div>
+                    <svg class="card-icon" viewBox="0 0 48 48" fill="none">
+                        <path d="M24 5L5 20v23a2 2 0 002 2h12V32h10v13h12a2 2 0 002-2V20L24 5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="24" cy="24" r="5" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M24 19v-3M24 32v-3M29 24h3M16 24h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    <h3 class="card-title">Home Automation</h3>
+                    <p class="card-desc">Transform residences into responsive living environments. Intelligent lighting, climate, security, and entertainment systems that learn, adapt, and anticipate your lifestyle — all from a single interface.</p>
+                </div>
+                <span class="card-link">Explore <span>&rarr;</span></span>
+            </a>
+
+            <!-- Medium: Building Automation -->
+            <a href="building-automation.html" class="glass-card bento-medium reveal-up" onclick="navigateTo(event, 'building-automation.html')">
+                <div>
+                    <svg class="card-icon" viewBox="0 0 48 48" fill="none">
+                        <rect x="8" y="6" width="32" height="38" rx="3" stroke="currentColor" stroke-width="1.5"/>
+                        <line x1="8" y1="16" x2="40" y2="16" stroke="currentColor" stroke-width="1.5"/>
+                        <line x1="8" y1="26" x2="40" y2="26" stroke="currentColor" stroke-width="1.5"/>
+                        <line x1="8" y1="36" x2="40" y2="36" stroke="currentColor" stroke-width="1.5"/>
+                        <line x1="24" y1="16" x2="24" y2="44" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                    <h3 class="card-title">Building Automation</h3>
+                    <p class="card-desc">Elevate commercial spaces with centralized building management. HVAC, access, occupancy analytics, and energy monitoring — reducing costs up to 40%.</p>
+                </div>
+                <span class="card-link">Explore <span>&rarr;</span></span>
+            </a>
+
+            <!-- Small: Urban Intelligence -->
+            <a href="urban-intelligence.html" class="glass-card bento-small reveal-up" onclick="navigateTo(event, 'urban-intelligence.html')">
+                <div>
+                    <svg class="card-icon" viewBox="0 0 48 48" fill="none">
+                        <rect x="5" y="18" width="12" height="26" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                        <rect x="21" y="8" width="12" height="36" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                        <rect x="33" y="22" width="10" height="22" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                    <h3 class="card-title">Urban Intelligence</h3>
+                    <p class="card-desc">City-scale awareness for traffic, utilities, and safety.</p>
+                </div>
+                <span class="card-link">Explore <span>&rarr;</span></span>
+            </a>
+
+            <!-- Small: Industrial Automation -->
+            <a href="industrial-automation.html" class="glass-card bento-small reveal-up" onclick="navigateTo(event, 'industrial-automation.html')">
+                <div>
+                    <svg class="card-icon" viewBox="0 0 48 48" fill="none">
+                        <path d="M5 44V22l10-6v10l10-6v10l10-6v20H5z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="40" cy="12" r="7" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                    <h3 class="card-title">Industrial Automation</h3>
+                    <p class="card-desc">Precision monitoring for factories and warehouses.</p>
+                </div>
+                <span class="card-link">Explore <span>&rarr;</span></span>
+            </a>
+
+            <!-- Large: Agriculture Automation (span 2 cols, 2 rows) -->
+            <a href="agriculture-automation.html" class="glass-card bento-large reveal-up" onclick="navigateTo(event, 'agriculture-automation.html')">
+                <div>
+                    <svg class="card-icon" viewBox="0 0 48 48" fill="none">
+                        <path d="M24 44V26" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M24 26c0-10 10-18 10-18s-2 10-10 18z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M24 26c0-10-10-18-10-18s2 10 10 18z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M10 44h28" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    <h3 class="card-title">Agriculture Automation</h3>
+                    <p class="card-desc">From soil to satellite. Precision irrigation, climate control, and yield optimization — driven by real-time data from every acre. Transforming how India farms.</p>
+                </div>
+                <span class="card-link">Explore <span>&rarr;</span></span>
+            </a>
+
+            <!-- Medium: Energy Management -->
+            <a href="energy-management.html" class="glass-card bento-medium reveal-up" onclick="navigateTo(event, 'energy-management.html')">
+                <div>
+                    <svg class="card-icon" viewBox="0 0 48 48" fill="none">
+                        <path d="M28 5L10 28h12l-2 15 18-23H26l2-15z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <h3 class="card-title">Energy Management</h3>
+                    <p class="card-desc">Optimize consumption, harness renewables, and protect every asset with unified energy intelligence. Real-time dashboards for every watt.</p>
+                </div>
+                <span class="card-link">Explore <span>&rarr;</span></span>
+            </a>
+        </div>
+    </section>
+
+    <!-- ============================================
+         FULL-BLEED IMAGE BREAKER 2
+         ============================================ -->
+    <section class="image-breaker" id="breaker2">
+        <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1600&q=85" alt="Earth from space at night showing interconnected city lights across continents">
+    </section>
+
+    <!-- ============================================
+         STATS DASHBOARD
+         ============================================ -->
+    <section class="stats-section" id="stats">
+        <div class="stats-header reveal-up">
+            <span class="label">By The Numbers</span>
+            <h2 class="gradient-text">Scale That Speaks</h2>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card reveal-up">
+                <div class="stat-number gradient-text"><span class="counter" data-target="1000">0</span><span class="stat-suffix">+</span></div>
+                <div class="stat-label">Projects Delivered</div>
+                <div class="stat-sublabel">Across India & Middle East</div>
+            </div>
+            <div class="stat-card reveal-up">
+                <div class="stat-number gradient-text"><span class="counter" data-target="100">0</span><span class="stat-suffix">+</span></div>
+                <div class="stat-label">Architect Partners</div>
+                <div class="stat-sublabel">Design community trust</div>
+            </div>
+            <div class="stat-card reveal-up">
+                <div class="stat-number gradient-text"><span class="counter" data-target="6">0</span><span class="stat-suffix">+</span></div>
+                <div class="stat-label">Industry Verticals</div>
+                <div class="stat-sublabel">One platform, many domains</div>
+            </div>
+            <div class="stat-card reveal-up">
+                <div class="stat-number gradient-text"><span class="counter" data-target="50">0</span><span class="stat-suffix">+</span></div>
+                <div class="stat-label">Smart Products</div>
+                <div class="stat-sublabel">Device-agnostic ecosystem</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         CTA SECTION
+         ============================================ -->
+    <section class="cta-section" id="cta">
+        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1920&q=85" alt="Dramatic modern architectural interior with sweeping lines and warm light">
+        <div class="cta-content reveal-up">
+            <span class="label">Start Your Journey</span>
+            <h2 class="gradient-text">Ready to Transform Your Space?</h2>
+            <p>Whether it is a single room or an entire city block, our team will design the intelligence layer your space deserves.</p>
+            <a href="contact.html" class="btn-accent" onclick="navigateTo(event, 'contact.html')">Get in Touch</a>
+        </div>
+    </section>
+
+    <!-- ============================================
+         FOOTER
+         ============================================ -->
+    <footer class="footer">
+        <div class="footer-gradient-line"></div>
+        <div class="footer-grid">
+            <!-- Brand -->
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <div class="footer-logo-circle"><span>L</span></div>
+                    <span class="footer-brand-name">LUCAVERSE</span>
+                </div>
+                <p>Intelligent automation for spaces that matter. From homes to cities, we build the invisible layer of intelligence that transforms how you live and work.</p>
+                <div class="footer-social">
+                    <a href="#" aria-label="LinkedIn">
+                        <svg viewBox="0 0 24 24"><path d="M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.3 6.5a1.78 1.78 0 01-1.8 1.75zM19 19h-3v-4.74c0-1.42-.6-1.93-1.38-1.93A1.74 1.74 0 0013 14.19V19h-3v-9h2.9v1.3a3.11 3.11 0 012.7-1.4c1.55 0 3.36.86 3.36 3.66z"/></svg>
+                    </a>
+                    <a href="#" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" fill="currentColor" opacity="0"/><rect x="2" y="2" width="20" height="20" rx="5" stroke="currentColor" stroke-width="0"/><path d="M17.5 6.5a1 1 0 11-2 0 1 1 0 012 0zM12 8.5a3.5 3.5 0 100 7 3.5 3.5 0 000-7zm0 5.8a2.3 2.3 0 110-4.6 2.3 2.3 0 010 4.6zM16.5 2h-9A5.5 5.5 0 002 7.5v9A5.5 5.5 0 007.5 22h9a5.5 5.5 0 005.5-5.5v-9A5.5 5.5 0 0016.5 2zm3.7 14.5a3.7 3.7 0 01-3.7 3.7h-9a3.7 3.7 0 01-3.7-3.7v-9a3.7 3.7 0 013.7-3.7h9a3.7 3.7 0 013.7 3.7z"/></svg>
+                    </a>
+                    <a href="#" aria-label="X / Twitter">
+                        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </a>
+                    <a href="#" aria-label="YouTube">
+                        <svg viewBox="0 0 24 24"><path d="M23.5 6.19a3.02 3.02 0 00-2.12-2.14C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.38.55A3.02 3.02 0 00.5 6.19 31.54 31.54 0 000 12a31.54 31.54 0 00.5 5.81 3.02 3.02 0 002.12 2.14c1.88.55 9.38.55 9.38.55s7.5 0 9.38-.55a3.02 3.02 0 002.12-2.14A31.54 31.54 0 0024 12a31.54 31.54 0 00-.5-5.81zM9.75 15.02V8.98L15.5 12z"/></svg>
+                    </a>
+                </div>
+            </div>
+            <!-- Solutions -->
+            <div class="footer-col">
+                <h4>Solutions</h4>
+                <ul>
+                    <li><a href="home-automation.html" onclick="navigateTo(event, 'home-automation.html')">Home Automation</a></li>
+                    <li><a href="building-automation.html" onclick="navigateTo(event, 'building-automation.html')">Building Automation</a></li>
+                    <li><a href="urban-intelligence.html" onclick="navigateTo(event, 'urban-intelligence.html')">Urban Intelligence</a></li>
+                    <li><a href="industrial-automation.html" onclick="navigateTo(event, 'industrial-automation.html')">Industrial Automation</a></li>
+                    <li><a href="agriculture-automation.html" onclick="navigateTo(event, 'agriculture-automation.html')">Agriculture Automation</a></li>
+                    <li><a href="energy-management.html" onclick="navigateTo(event, 'energy-management.html')">Energy Management</a></li>
+                    <li><a href="security-video-analytics.html" onclick="navigateTo(event, 'security-video-analytics.html')">Security & Analytics</a></li>
+                </ul>
+            </div>
+            <!-- Company -->
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="about.html" onclick="navigateTo(event, 'about.html')">About Us</a></li>
+                    <li><a href="products.html" onclick="navigateTo(event, 'products.html')">Products</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="contact.html" onclick="navigateTo(event, 'contact.html')">Contact</a></li>
+                </ul>
+            </div>
+            <!-- Connect -->
+            <div class="footer-col">
+                <h4>Connect</h4>
+                <div class="footer-connect-item">
+                    <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                    <span>contact@lucaverse.ai</span>
+                </div>
+                <div class="footer-connect-item">
+                    <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.12.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.58 2.81.7A2 2 0 0122 16.92z"/></svg>
+                    <span>+91 9992-223-890</span>
+                </div>
+                <div class="footer-connect-item">
+                    <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span>Hyderabad, Telangana<br>India</span>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2026 LucaVerse Pvt Ltd. All rights reserved.</span>
+            <div class="footer-bottom-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Sitemap</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- =========================================
+         JAVASCRIPT — All inline
+         ========================================= -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
+    <script>
+    (function() {
+        'use strict';
+
+        /* =========================================
+           LOADER — heartbeat 3x, then fade out 1.5s
+           ========================================= */
+        window.addEventListener('load', function() {
+            // 3 heartbeats at 0.8s each = ~2.4s, then fade
+            setTimeout(function() {
+                var loader = document.getElementById('loader');
+                loader.style.transition = 'opacity 0.6s ease, visibility 0.6s ease';
+                loader.classList.add('hidden');
+                setTimeout(function() {
+                    loader.remove();
+                    initHeroAnimations();
+                }, 600);
+            }, 1500);
+        });
+
+        /* =========================================
+           LENIS SMOOTH SCROLL + GSAP SYNC
+           ========================================= */
+        var lenis = new Lenis({
+            duration: 1.2,
+            easing: function(t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+            orientation: 'vertical',
+            smoothWheel: true,
+            touchMultiplier: 2
+        });
+
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add(function(time) { lenis.raf(time * 1000); });
+        gsap.ticker.lagSmoothing(0);
+
+        /* =========================================
+           CUSTOM CURSOR — ring 40px + dot 6px
+           ========================================= */
+        var cursorRing = document.getElementById('cursorRing');
+        var cursorDot = document.getElementById('cursorDot');
+
+        if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+            var ringX = gsap.quickTo(cursorRing, 'left', { duration: 0.4, ease: 'power3' });
+            var ringY = gsap.quickTo(cursorRing, 'top', { duration: 0.4, ease: 'power3' });
+            var dotX = gsap.quickTo(cursorDot, 'left', { duration: 0.15, ease: 'power3' });
+            var dotY = gsap.quickTo(cursorDot, 'top', { duration: 0.15, ease: 'power3' });
+
+            document.addEventListener('mousemove', function(e) {
+                ringX(e.clientX);
+                ringY(e.clientY);
+                dotX(e.clientX);
+                dotY(e.clientY);
+            });
+
+            // Hover detection — grows to 60px
+            document.querySelectorAll('a, button, .glass-card, .stat-card, .hero-progress-bar').forEach(function(el) {
+                el.addEventListener('mouseenter', function() { cursorRing.classList.add('hover'); });
+                el.addEventListener('mouseleave', function() { cursorRing.classList.remove('hover'); });
+            });
+        }
+
+        /* =========================================
+           SCROLL PROGRESS BAR — 3px accent, fixed top
+           ========================================= */
+        gsap.registerPlugin(ScrollTrigger);
+
+        var scrollProgress = document.getElementById('scrollProgress');
+        gsap.to(scrollProgress, {
+            scaleX: 1,
+            ease: 'none',
+            scrollTrigger: {
+                trigger: document.documentElement,
+                start: 'top top',
+                end: 'bottom bottom',
+                scrub: 0.3
+            }
+        });
+
+        /* =========================================
+           NAVIGATION — Blur on scroll (60px threshold)
+           ========================================= */
+        var nav = document.getElementById('nav');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 60) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        /* =========================================
+           MOBILE HAMBURGER MENU
+           ========================================= */
+        var hamburger = document.getElementById('hamburger');
+        var mobileMenu = document.getElementById('mobileMenu');
+        var mobileSolutionsToggle = document.getElementById('mobileSolutionsToggle');
+        var mobileSolutionsSub = document.getElementById('mobileSolutionsSub');
+
+        hamburger.addEventListener('click', function() {
+            hamburger.classList.toggle('open');
+            mobileMenu.classList.toggle('open');
+            if (mobileMenu.classList.contains('open')) {
+                lenis.stop();
+            } else {
+                lenis.start();
+            }
+        });
+
+        // Toggle Solutions sub-menu in mobile
+        if (mobileSolutionsToggle) {
+            mobileSolutionsToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                mobileSolutionsSub.classList.toggle('open');
+            });
+        }
+
+        /* =========================================
+           PAGE TRANSITIONS — navigateTo() with 400ms overlay
+           ========================================= */
+        function navigateTo(e, url) {
+            if (!url || url === '#') return;
+            // Don't transition if same page
+            if (url === 'index.html' && window.location.pathname.endsWith('index.html')) return;
+            if (e) e.preventDefault();
+            var overlay = document.getElementById('pageTransition');
+            overlay.classList.add('active');
+            setTimeout(function() {
+                window.location.href = url;
+            }, 400);
+        }
+        window.navigateTo = navigateTo;
+
+        /* =========================================
+           HERO SLIDESHOW — GSAP crossfade, 4s per slide
+           ========================================= */
+        var heroSlides = document.querySelectorAll('.hero-slide');
+        var heroBars = document.querySelectorAll('.hero-progress-bar');
+        var currentSlide = 0;
+        var slideCount = heroSlides.length;
+        var slideDuration = 4; // seconds
+        var progressTween = null;
+        var slideTimer = null;
+
+        function resetAllBars() {
+            heroBars.forEach(function(bar) {
+                bar.classList.remove('active', 'done');
+                gsap.set(bar.querySelector('.fill'), { width: '0%' });
+            });
+        }
+
+        function goToSlide(index) {
+            // Kill existing progress animation
+            if (progressTween) progressTween.kill();
+            if (slideTimer) clearTimeout(slideTimer);
+
+            resetAllBars();
+
+            // Mark previous bars as done
+            for (var i = 0; i < index; i++) {
+                heroBars[i].classList.add('done');
+                gsap.set(heroBars[i].querySelector('.fill'), { width: '100%' });
+            }
+
+            // Crossfade slides with GSAP
+            heroSlides.forEach(function(slide, i) {
+                if (i === index) {
+                    gsap.to(slide, { opacity: 1, duration: 1.2, ease: 'power2.inOut' });
+                } else if (slide.style.opacity !== '0' && i !== index) {
+                    gsap.to(slide, { opacity: 0, duration: 1.2, ease: 'power2.inOut' });
+                }
+            });
+
+            // Animate the progress bar fill
+            heroBars[index].classList.add('active');
+            progressTween = gsap.to(heroBars[index].querySelector('.fill'), {
+                width: '100%',
+                duration: slideDuration,
+                ease: 'none',
+                onComplete: function() {
+                    nextSlide();
+                }
+            });
+
+            currentSlide = index;
+        }
+
+        function nextSlide() {
+            var next = (currentSlide + 1) % slideCount;
+            goToSlide(next);
+        }
+
+        function initHeroAnimations() {
+            // Animate hero content elements in
+            gsap.to('.hero-label', { opacity: 1, y: 0, duration: 0.8, delay: 0.2, ease: 'power2.out' });
+            gsap.to('.hero-title', { opacity: 1, y: 0, duration: 1, delay: 0.4, ease: 'power2.out' });
+            gsap.to('.hero-subtitle', { opacity: 1, y: 0, duration: 0.8, delay: 0.7, ease: 'power2.out' });
+            gsap.to('.hero-ctas', { opacity: 1, y: 0, duration: 0.8, delay: 0.9, ease: 'power2.out' });
+
+            // Start slideshow
+            goToSlide(0);
+        }
+
+        // Click progress bars to jump to slide
+        heroBars.forEach(function(bar) {
+            bar.addEventListener('click', function() {
+                var idx = parseInt(this.getAttribute('data-index'));
+                goToSlide(idx);
+            });
+        });
+
+        /* =========================================
+           BRAND STATEMENT — Word-by-word scroll reveal (GSAP scrub)
+           ========================================= */
+        var brandTextEl = document.getElementById('brandText');
+        var brandSentence = "We don't just automate spaces. We give them intelligence.";
+        var words = brandSentence.split(' ');
+        var wordSpans = [];
+
+        words.forEach(function(word) {
+            var span = document.createElement('span');
+            span.className = 'word';
+            span.textContent = word;
+            brandTextEl.appendChild(span);
+            wordSpans.push(span);
+        });
+
+        // GSAP timeline scrubbed to scroll position
+        var brandTl = gsap.timeline({
+            scrollTrigger: {
+                trigger: '#brandStatement',
+                start: 'top 75%',
+                end: 'bottom 25%',
+                scrub: 0.5
+            }
+        });
+
+        wordSpans.forEach(function(span, i) {
+            brandTl.to(span, {
+                opacity: 1,
+                duration: 0.5,
+                ease: 'power1.out'
+            }, i * 0.12);
+        });
+
+        /* =========================================
+           IMAGE PARALLAX — All full-bleed images
+           ========================================= */
+        document.querySelectorAll('.image-breaker img').forEach(function(img) {
+            gsap.to(img, {
+                y: '15%',
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: img.parentElement,
+                    start: 'top bottom',
+                    end: 'bottom top',
+                    scrub: true
+                }
+            });
+        });
+
+        // CTA section parallax
+        var ctaImg = document.querySelector('.cta-section img');
+        if (ctaImg) {
+            gsap.to(ctaImg, {
+                y: '15%',
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '.cta-section',
+                    start: 'top bottom',
+                    end: 'bottom top',
+                    scrub: true
+                }
+            });
+        }
+
+        /* =========================================
+           GLASS CARD SPOTLIGHT — Mouse tracking radial gradient
+           ========================================= */
+        document.querySelectorAll('.glass-card, .stat-card').forEach(function(card) {
+            card.addEventListener('mousemove', function(e) {
+                var rect = card.getBoundingClientRect();
+                var x = e.clientX - rect.left;
+                var y = e.clientY - rect.top;
+                card.style.setProperty('--mx', x + 'px');
+                card.style.setProperty('--my', y + 'px');
+            });
+        });
+
+        /* =========================================
+           REVEAL ANIMATIONS — IntersectionObserver at 15%, stagger 100ms
+           ========================================= */
+        var revealElements = document.querySelectorAll('.reveal-up');
+        var revealObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    // Stagger children if they exist
+                    var children = entry.target.querySelectorAll('.reveal-up');
+                    if (children.length > 0) {
+                        children.forEach(function(child, i) {
+                            setTimeout(function() {
+                                child.classList.add('revealed');
+                            }, i * 100);
+                        });
+                    }
+                    entry.target.classList.add('revealed');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.15,
+            rootMargin: '0px'
+        });
+
+        revealElements.forEach(function(el) {
+            revealObserver.observe(el);
+        });
+
+        /* =========================================
+           COUNTUP ANIMATION — IntersectionObserver triggered
+           ========================================= */
+        var counters = document.querySelectorAll('.counter');
+        var counterObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    var el = entry.target;
+                    var target = parseInt(el.getAttribute('data-target'));
+                    var duration = 2;
+                    var obj = { value: 0 };
+                    gsap.to(obj, {
+                        value: target,
+                        duration: duration,
+                        ease: 'power2.out',
+                        onUpdate: function() {
+                            el.textContent = Math.floor(obj.value).toLocaleString();
+                        },
+                        onComplete: function() {
+                            el.textContent = target.toLocaleString();
+                        }
+                    });
+                    counterObserver.unobserve(el);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        counters.forEach(function(c) {
+            counterObserver.observe(c);
+        });
+
+        /* =========================================
+           BACK NAVIGATION — prevent flash
+           ========================================= */
+        window.addEventListener('pageshow', function(e) {
+            if (e.persisted) {
+                var loader = document.getElementById('loader');
+                if (loader) loader.classList.add('hidden');
+                document.getElementById('pageTransition').classList.remove('active');
+            }
+        });
+
+    })();
+    </script>
+</body>
+</html>

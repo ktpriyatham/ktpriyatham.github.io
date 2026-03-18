@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Management | LUCAVERSE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
+    <style>
+        :root {
+            --black: #000000;
+            --dark: #0a0a0a;
+            --charcoal: #111111;
+            --dark-grey: #1a1a1a;
+            --mid-grey: #2a2a2a;
+            --text-grey: #888888;
+            --white: #f5f5f5;
+            --pure-white: #ffffff;
+            --accent: #b8d3c8;
+            --accent-light: #d0e3db;
+            --accent-hover: #9fbdb1;
+            --font: 'Montserrat', sans-serif;
+            --text-primary: rgba(255,255,255, 0.95);
+            --text-secondary: rgba(255,255,255, 0.72);
+            --text-tertiary: rgba(255,255,255, 0.50);
+            --text-quaternary: rgba(255,255,255, 0.35);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { cursor: none; }
+        body {
+            font-family: var(--font);
+            background: var(--black);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        em { font-style: normal; color: var(--accent); }
+
+        /* ========== CUSTOM CURSOR ========== */
+        .cursor-ring {
+            position: fixed; width: 40px; height: 40px;
+            border: 1.5px solid rgba(184,211,200,0.4);
+            border-radius: 50%; pointer-events: none; z-index: 10001;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+        .cursor-dot {
+            position: fixed; width: 6px; height: 6px;
+            background: var(--accent); border-radius: 50%;
+            pointer-events: none; z-index: 10001;
+            transform: translate(-50%, -50%);
+        }
+        .cursor-ring.hover { width: 60px; height: 60px; }
+        @media (pointer: coarse) {
+            .cursor-ring, .cursor-dot { display: none; }
+            html { cursor: auto; }
+        }
+
+        /* ========== SCROLL PROGRESS ========== */
+        .scroll-progress {
+            position: fixed; top: 0; left: 0; height: 3px;
+            background: var(--accent); z-index: 10000; width: 0%;
+        }
+
+        /* ========== FILM GRAIN ========== */
+        body::after {
+            content: ''; position: fixed; inset: 0; z-index: 9998;
+            pointer-events: none; opacity: 0.15; mix-blend-mode: overlay;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        }
+
+        /* ========== LOADER ========== */
+        .loader {
+            position: fixed; inset: 0; background: var(--black); z-index: 10002;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .loader-logo {
+            width: 55px; height: 55px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            display: flex; align-items: center; justify-content: center;
+            font-family: var(--font); font-weight: 600; font-size: 1.1rem;
+            color: var(--black); animation: heartbeat 0.6s ease-in-out 3;
+        }
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(184,211,200,0.4); }
+            50% { transform: scale(1.15); box-shadow: 0 0 30px 10px rgba(184,211,200,0.3); }
+        }
+
+        /* ========== PAGE TRANSITION ========== */
+        .page-transition {
+            position: fixed; inset: 0; background: var(--black);
+            z-index: 10003; opacity: 0; pointer-events: none;
+        }
+
+        /* ========== NAVIGATION ========== */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+            padding: 20px 48px; display: flex; align-items: center;
+            justify-content: space-between;
+            transition: background 0.4s, backdrop-filter 0.4s, padding 0.4s;
+        }
+        nav.scrolled {
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            padding: 14px 48px;
+        }
+        .nav-left { display: flex; align-items: center; gap: 14px; }
+        .nav-logo {
+            width: 55px; height: 55px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 600; font-size: 1.1rem; color: var(--black); flex-shrink: 0;
+        }
+        .nav-brand { font-weight: 300; font-size: 1.3rem; color: var(--white); letter-spacing: 0.05em; }
+        .nav-line { width: 30px; height: 1px; background: linear-gradient(90deg, var(--accent), transparent); }
+        .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
+        .nav-links a {
+            color: var(--text-secondary); text-decoration: none; font-size: 0.85rem;
+            font-weight: 400; letter-spacing: 0.02em; transition: color 0.3s; position: relative;
+        }
+        .nav-links a:hover { color: var(--white); }
+        .nav-cta {
+            background: var(--accent); color: var(--black); padding: 10px 28px;
+            border-radius: 100px; font-size: 0.8rem; font-weight: 500;
+            text-decoration: none; letter-spacing: 0.04em;
+            transition: background 0.3s, transform 0.3s;
+        }
+        .nav-cta:hover { background: var(--accent-hover); transform: scale(1.04); }
+
+        /* ========== MEGA MENU ========== */
+        .solutions-trigger { position: relative; }
+        .mega-menu {
+            position: absolute; top: 100%; left: 50%;
+            transform: translateX(-50%) translateY(10px); width: 780px;
+            background: rgba(20,20,20,0.85);
+            backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.06); border-radius: 20px;
+            padding: 36px 40px; opacity: 0; pointer-events: none;
+            transition: opacity 0.35s, transform 0.35s;
+        }
+        .solutions-trigger:hover .mega-menu {
+            opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0);
+        }
+        .mega-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .mega-item {
+            display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+            border-radius: 12px; text-decoration: none; color: var(--text-secondary);
+            transition: background 0.3s, color 0.3s;
+        }
+        .mega-item:hover { background: rgba(255,255,255,0.05); color: var(--white); }
+        .mega-icon {
+            width: 36px; height: 36px; border-radius: 10px;
+            background: rgba(184,211,200,0.1); display: flex;
+            align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .mega-icon svg { width: 18px; height: 18px; stroke: var(--accent); fill: none; stroke-width: 1.5; }
+        .mega-label { font-size: 0.78rem; font-weight: 400; }
+
+        /* ========== MOBILE NAV ========== */
+        .hamburger {
+            display: none; flex-direction: column; gap: 6px;
+            background: none; border: none; cursor: none; padding: 8px; z-index: 10001;
+        }
+        .hamburger span { width: 28px; height: 1.5px; background: var(--white); transition: transform 0.3s, opacity 0.3s; }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+        .mobile-menu {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(30px); z-index: 9998; display: flex;
+            flex-direction: column; align-items: center; justify-content: center;
+            gap: 32px; opacity: 0; pointer-events: none; transition: opacity 0.4s;
+        }
+        .mobile-menu.active { opacity: 1; pointer-events: auto; }
+        .mobile-menu a {
+            font-size: 1.8rem; font-weight: 200; color: var(--text-secondary);
+            text-decoration: none; transition: color 0.3s;
+        }
+        .mobile-menu a:hover { color: var(--accent); }
+
+        /* ========== HERO ========== */
+        .hero {
+            position: relative; height: 100vh; min-height: 600px; overflow: hidden;
+            display: flex; align-items: flex-end; padding: 0 48px 100px;
+        }
+        .hero-img {
+            position: absolute; inset: 0; background-size: cover;
+            background-position: center; will-change: transform;
+        }
+        .hero-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.5) 50%, rgba(0,0,0,0.9) 100%);
+        }
+        .hero-content { position: relative; z-index: 2; max-width: 900px; }
+        .hero-label {
+            font-size: 0.7rem; font-weight: 500; text-transform: uppercase;
+            letter-spacing: 0.2em; color: var(--accent); margin-bottom: 24px;
+        }
+        .hero h1 {
+            font-size: clamp(3.5rem, 8vw, 7rem); font-weight: 200;
+            letter-spacing: -0.03em; line-height: 1.05; text-wrap: balance;
+            background: linear-gradient(135deg, var(--white) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .hero-sub {
+            margin-top: 24px; font-size: 1.1rem; font-weight: 300;
+            color: var(--text-secondary); max-width: 550px; line-height: 1.7;
+        }
+
+        /* ========== SECTION HELPERS ========== */
+        section { position: relative; }
+        .section-label {
+            font-size: 0.7rem; font-weight: 500; text-transform: uppercase;
+            letter-spacing: 0.2em; color: var(--accent); margin-bottom: 20px;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, var(--white) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        h2 {
+            font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 200;
+            letter-spacing: -0.02em; text-wrap: balance;
+        }
+        h3 { font-size: clamp(1.5rem, 2.5vw, 2rem); font-weight: 300; }
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        /* ========== BRAND STATEMENT ========== */
+        .brand-statement {
+            padding: 200px 48px; display: flex; align-items: center;
+            justify-content: center; background: var(--black);
+        }
+        .brand-text {
+            font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 200;
+            line-height: 1.4; text-align: center; max-width: 900px; text-wrap: balance;
+        }
+        .brand-text .word {
+            display: inline-block; opacity: 0.15; transition: opacity 0.3s; margin-right: 0.3em;
+        }
+        .brand-text .word.active { opacity: 1; color: var(--white); }
+
+        /* ========== FULL-BLEED IMAGE SECTIONS ========== */
+        .image-breaker {
+            position: relative; width: 100%; height: 60vh;
+            min-height: 400px; overflow: hidden;
+        }
+        .image-breaker-img {
+            position: absolute; inset: -20%; background-size: cover;
+            background-position: center; will-change: transform;
+        }
+        .image-breaker-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.5) 100%);
+        }
+
+        /* ========================================================
+           BENTO DASHBOARD GRID — THE SHOWCASE SECTION
+           ======================================================== */
+        .bento-section {
+            padding: 180px 48px;
+            background: var(--black);
+        }
+        .bento-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 80px;
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-auto-rows: 200px;
+            gap: 16px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .bento-card {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), rgba(184,211,200,0.06), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.4s;
+            pointer-events: none;
+        }
+        .bento-card:hover::before { opacity: 1; }
+
+        .bento-large { grid-column: span 2; grid-row: span 2; }
+        .bento-medium { grid-column: span 2; }
+        .bento-small { grid-column: span 1; grid-row: span 1; }
+
+        /* --- Bento Card: Bar Chart --- */
+        .bento-chart { padding: 32px 32px 24px; }
+        .bento-chart-title {
+            font-size: 0.7rem; font-weight: 500; text-transform: uppercase;
+            letter-spacing: 0.15em; color: var(--accent); margin-bottom: 8px;
+        }
+        .bento-chart-subtitle {
+            font-size: 0.85rem; font-weight: 300; color: var(--text-secondary); margin-bottom: 24px;
+        }
+        .chart-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 12px;
+            flex: 1;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .chart-bar-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+        .chart-bar {
+            width: 100%;
+            border-radius: 8px 8px 4px 4px;
+            background: linear-gradient(to top, var(--accent), rgba(184,211,200,0.3));
+            min-height: 8px;
+            position: relative;
+            transform-origin: bottom;
+            transform: scaleY(0);
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .chart-bar.animated { transform: scaleY(1); }
+        .chart-bar-label {
+            font-size: 0.65rem; font-weight: 400; color: var(--text-tertiary);
+        }
+        .chart-value {
+            position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+            font-size: 0.65rem; font-weight: 500; color: var(--accent); white-space: nowrap;
+            opacity: 0; transition: opacity 0.5s 1s;
+        }
+        .chart-bar.animated .chart-value { opacity: 1; }
+
+        /* --- Bento Card: Stat Counter --- */
+        .bento-stat {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .stat-number {
+            font-size: clamp(2.5rem, 4vw, 3.5rem);
+            font-weight: 200;
+            color: var(--white);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        .stat-number .counter-value {
+            display: inline-block;
+        }
+        .stat-suffix {
+            color: var(--accent);
+            font-weight: 300;
+        }
+        .stat-label {
+            font-size: 0.75rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+            letter-spacing: 0.05em;
+        }
+
+        /* --- Bento Card: Wave Animation --- */
+        .bento-wave {
+            padding: 24px 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .wave-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .wave-title {
+            font-size: 0.7rem; font-weight: 500; text-transform: uppercase;
+            letter-spacing: 0.15em; color: var(--accent);
+        }
+        .wave-live {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 0.65rem; font-weight: 400; color: var(--text-tertiary);
+        }
+        .wave-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: #4ade80; animation: pulse-dot 2s infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .wave-canvas {
+            position: relative;
+            width: 100%;
+            height: 100px;
+            overflow: hidden;
+        }
+        .wave-svg {
+            position: absolute;
+            bottom: 0;
+            width: 200%;
+            height: 100%;
+        }
+        .wave-path {
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: 2;
+            opacity: 0.6;
+        }
+        .wave-path-fill {
+            fill: url(#waveGrad);
+            opacity: 0.15;
+        }
+        .wave-flow-label {
+            font-size: 1.4rem; font-weight: 200; color: var(--white);
+        }
+        .wave-flow-unit {
+            font-size: 0.75rem; font-weight: 300; color: var(--text-tertiary);
+        }
+
+        /* --- Bento Card: Sun Glow --- */
+        .bento-sun {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .sun-glow {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,200,50,0.5) 0%, rgba(255,200,50,0.15) 40%, transparent 70%);
+            animation: sun-pulse 3s ease-in-out infinite;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .sun-glow svg {
+            width: 32px;
+            height: 32px;
+            stroke: rgba(255,220,80,0.9);
+            fill: none;
+            stroke-width: 1.5;
+        }
+        @keyframes sun-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 1; }
+        }
+        .sun-label {
+            font-size: 0.85rem; font-weight: 400; color: var(--white);
+        }
+        .sun-status {
+            font-size: 0.7rem; font-weight: 300; color: var(--accent);
+            margin-top: 4px;
+        }
+
+        /* --- Bento Card: Temperature Gauge --- */
+        .bento-temp {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 32px;
+        }
+        .temp-gauge-wrap {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin-bottom: 20px;
+        }
+        .temp-gauge-svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+        .temp-gauge-bg {
+            fill: none;
+            stroke: rgba(255,255,255,0.06);
+            stroke-width: 8;
+            stroke-linecap: round;
+        }
+        .temp-gauge-fill {
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 502;
+            stroke-dashoffset: 502;
+            transition: stroke-dashoffset 2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .temp-gauge-fill.animated {
+            /* 23/50 = 46% of 502 = 271. offset = 502 - 231 = 271 */
+            stroke-dashoffset: 271;
+        }
+        .temp-value-wrap {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .temp-value {
+            font-size: 2.8rem;
+            font-weight: 200;
+            color: var(--white);
+            line-height: 1;
+        }
+        .temp-unit {
+            font-size: 1rem;
+            font-weight: 300;
+            color: var(--text-tertiary);
+            margin-top: 4px;
+        }
+        .temp-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: 100px;
+            background: rgba(184,211,200,0.1);
+            border: 1px solid rgba(184,211,200,0.2);
+        }
+        .temp-status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+        .temp-status-text {
+            font-size: 0.75rem;
+            font-weight: 400;
+            color: var(--accent);
+        }
+        .temp-chart-title {
+            font-size: 0.7rem; font-weight: 500; text-transform: uppercase;
+            letter-spacing: 0.15em; color: var(--accent); margin-bottom: 16px;
+        }
+
+        /* ========== FEATURE DETAILS (FULL-BLEED) ========== */
+        .feature-section {
+            position: relative; width: 100%; min-height: 80vh;
+            overflow: hidden; display: flex; align-items: center;
+        }
+        .feature-bg {
+            position: absolute; inset: -10%; background-size: cover;
+            background-position: center; will-change: transform;
+        }
+        .feature-overlay {
+            position: absolute; inset: 0;
+            background: linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.2) 100%);
+        }
+        .feature-panel {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px; padding: 48px; position: relative; z-index: 2;
+            margin: 80px 48px; max-width: 600px;
+        }
+        .feature-panel::before {
+            content: ''; position: absolute; inset: 0; border-radius: 20px;
+            background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), rgba(184,211,200,0.06), transparent 40%);
+            opacity: 0; transition: opacity 0.4s; pointer-events: none;
+        }
+        .feature-panel:hover::before { opacity: 1; }
+        .feature-step {
+            font-size: 0.7rem; font-weight: 500; text-transform: uppercase;
+            letter-spacing: 0.2em; color: var(--accent); margin-bottom: 16px;
+        }
+        .feature-panel h3 { margin-bottom: 20px; color: var(--white); }
+        .feature-panel p {
+            font-size: 1.05rem; font-weight: 300; line-height: 1.8;
+            color: var(--text-secondary); margin-bottom: 16px;
+        }
+        .feature-bullets {
+            list-style: none; display: flex; flex-direction: column;
+            gap: 12px; margin-top: 24px;
+        }
+        .feature-bullets li {
+            display: flex; align-items: center; gap: 12px;
+            font-size: 0.95rem; font-weight: 300; color: var(--text-secondary);
+        }
+        .feature-bullets li::before {
+            content: ''; width: 4px; height: 4px; border-radius: 50%;
+            background: var(--accent); flex-shrink: 0;
+        }
+
+        /* ========== ROI TIMELINE ========== */
+        .roi-section {
+            padding: 180px 48px;
+            background: var(--black);
+        }
+        .roi-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 80px;
+        }
+        .roi-header p {
+            font-size: 1.05rem; font-weight: 300; color: var(--text-secondary);
+            line-height: 1.8; margin-top: 20px;
+        }
+        .roi-timeline {
+            position: relative;
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        .roi-line {
+            position: absolute;
+            top: 40px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, rgba(184,211,200,0.1), var(--accent), rgba(184,211,200,0.1));
+            z-index: 0;
+        }
+        .roi-card {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            padding: 32px 24px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            flex: 1;
+            max-width: 240px;
+        }
+        .roi-card::before {
+            content: ''; position: absolute; inset: 0; border-radius: 20px;
+            background: radial-gradient(400px circle at var(--mx, 50%) var(--my, 50%), rgba(184,211,200,0.06), transparent 40%);
+            opacity: 0; transition: opacity 0.4s; pointer-events: none;
+        }
+        .roi-card:hover::before { opacity: 1; }
+        .roi-dot {
+            width: 14px; height: 14px; border-radius: 50%;
+            background: var(--accent); margin: 0 auto 20px;
+            position: relative;
+        }
+        .roi-dot::after {
+            content: ''; position: absolute; inset: -4px;
+            border-radius: 50%; border: 1px solid rgba(184,211,200,0.3);
+        }
+        .roi-month {
+            font-size: 0.7rem; font-weight: 500; text-transform: uppercase;
+            letter-spacing: 0.15em; color: var(--accent); margin-bottom: 10px;
+        }
+        .roi-title {
+            font-size: 1.1rem; font-weight: 300; color: var(--white); margin-bottom: 8px;
+        }
+        .roi-desc {
+            font-size: 0.85rem; font-weight: 300; color: var(--text-secondary); line-height: 1.6;
+        }
+
+        /* ========== PRODUCT GRID ========== */
+        .products-section {
+            padding: 180px 48px;
+            background: var(--dark);
+        }
+        .product-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+            max-width: 1200px; margin: 60px auto 0;
+        }
+        .product-card {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.06); border-radius: 20px;
+            padding: 48px 32px; position: relative; overflow: hidden;
+            transition: transform 0.4s, border-color 0.4s;
+        }
+        .product-card:hover { transform: translateY(-4px); border-color: rgba(184,211,200,0.15); }
+        .product-card::before {
+            content: ''; position: absolute; inset: 0; border-radius: 20px;
+            background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), rgba(184,211,200,0.06), transparent 40%);
+            opacity: 0; transition: opacity 0.4s; pointer-events: none;
+        }
+        .product-card:hover::before { opacity: 1; }
+        .product-icon {
+            width: 56px; height: 56px; border-radius: 14px;
+            background: rgba(184,211,200,0.08); display: flex;
+            align-items: center; justify-content: center; margin-bottom: 24px;
+        }
+        .product-icon svg { width: 26px; height: 26px; stroke: var(--accent); fill: none; stroke-width: 1.5; }
+        .product-card h3 { font-size: 1.2rem; font-weight: 400; margin-bottom: 12px; color: var(--white); }
+        .product-card p { font-size: 0.9rem; font-weight: 300; color: var(--text-secondary); line-height: 1.7; }
+
+        /* ========== STATS DASHBOARD WIDGETS ========== */
+        .stats-section {
+            padding: 140px 48px;
+            background: var(--black);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .stats-widget {
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            padding: 36px 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .stats-widget::before {
+            content: ''; position: absolute; inset: 0; border-radius: 20px;
+            background: radial-gradient(400px circle at var(--mx, 50%) var(--my, 50%), rgba(184,211,200,0.06), transparent 40%);
+            opacity: 0; transition: opacity 0.4s; pointer-events: none;
+        }
+        .stats-widget:hover::before { opacity: 1; }
+        .stats-number {
+            font-size: 2.2rem; font-weight: 200; color: var(--white); margin-bottom: 6px;
+        }
+        .stats-number span { color: var(--accent); }
+        .stats-label {
+            font-size: 0.75rem; font-weight: 400; color: var(--text-secondary);
+        }
+
+        /* ========== CTA SECTION ========== */
+        .cta-section {
+            position: relative; width: 100%; min-height: 70vh;
+            overflow: hidden; display: flex; align-items: center; justify-content: center;
+        }
+        .cta-bg {
+            position: absolute; inset: -10%; background-size: cover;
+            background-position: center; will-change: transform;
+        }
+        .cta-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.7); }
+        .cta-content {
+            position: relative; z-index: 2; text-align: center;
+            max-width: 700px; padding: 48px;
+        }
+        .cta-content h2 { margin-bottom: 24px; }
+        .cta-content p {
+            font-size: 1.1rem; font-weight: 300; color: var(--text-secondary);
+            margin-bottom: 40px; line-height: 1.7;
+        }
+        .cta-btn {
+            display: inline-block; background: var(--accent); color: var(--black);
+            padding: 16px 48px; border-radius: 100px; font-size: 0.9rem; font-weight: 500;
+            text-decoration: none; letter-spacing: 0.04em;
+            transition: background 0.3s, transform 0.3s;
+        }
+        .cta-btn:hover { background: var(--accent-hover); transform: scale(1.04); }
+
+        /* ========== FOOTER ========== */
+        footer {
+            padding: 100px 48px 40px; background: var(--dark);
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .footer-grid {
+            display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
+            gap: 60px; max-width: 1200px; margin: 0 auto 80px;
+        }
+        .footer-brand-logo {
+            width: 45px; height: 45px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 600; font-size: 0.9rem; color: var(--black); margin-bottom: 20px;
+        }
+        .footer-desc { font-size: 0.9rem; font-weight: 300; color: var(--text-secondary); line-height: 1.7; margin-bottom: 24px; }
+        .footer-social { display: flex; gap: 12px; }
+        .footer-social a {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: rgba(255,255,255,0.05); display: flex;
+            align-items: center; justify-content: center; transition: background 0.3s;
+        }
+        .footer-social a:hover { background: rgba(184,211,200,0.15); }
+        .footer-social svg { width: 16px; height: 16px; fill: var(--text-secondary); }
+        .footer-col h4 {
+            font-size: 0.75rem; font-weight: 500; text-transform: uppercase;
+            letter-spacing: 0.15em; color: var(--accent); margin-bottom: 24px;
+        }
+        .footer-col a {
+            display: block; font-size: 0.88rem; font-weight: 300;
+            color: var(--text-secondary); text-decoration: none; margin-bottom: 14px;
+            transition: color 0.3s;
+        }
+        .footer-col a:hover { color: var(--white); }
+        .footer-col p { font-size: 0.88rem; font-weight: 300; color: var(--text-secondary); line-height: 1.7; margin-bottom: 10px; }
+        .footer-gradient {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent), transparent);
+            margin-bottom: 32px; max-width: 1200px; margin-left: auto; margin-right: auto;
+        }
+        .footer-bottom {
+            display: flex; justify-content: space-between; align-items: center;
+            max-width: 1200px; margin: 0 auto;
+        }
+        .footer-copy { font-size: 0.78rem; color: var(--text-tertiary); font-weight: 300; }
+        .footer-legal { display: flex; gap: 24px; }
+        .footer-legal a {
+            font-size: 0.78rem; color: var(--text-tertiary); text-decoration: none;
+            font-weight: 300; transition: color 0.3s;
+        }
+        .footer-legal a:hover { color: var(--text-secondary); }
+
+        /* ========== REVEAL ANIMATIONS ========== */
+        .reveal-up {
+            opacity: 0; transform: translateY(40px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-up.visible { opacity: 1; transform: translateY(0); }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 1024px) {
+            .bento-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-auto-rows: 200px;
+            }
+            .bento-large { grid-column: span 2; grid-row: span 2; }
+            .bento-medium { grid-column: span 2; }
+            .product-grid { grid-template-columns: repeat(2, 1fr); }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .roi-timeline { flex-wrap: wrap; justify-content: center; }
+            .roi-line { display: none; }
+            .roi-card { max-width: none; flex: 0 0 calc(50% - 10px); }
+            .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 40px; }
+            nav { padding: 16px 32px; }
+            .hero { padding: 0 32px 80px; }
+            .bento-section, .roi-section, .products-section, .stats-section, .brand-statement { padding-left: 32px; padding-right: 32px; }
+            .feature-panel { margin: 60px 32px; }
+            .mega-menu { width: 600px; }
+            .mega-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hamburger { display: flex; }
+            .bento-grid {
+                grid-template-columns: 1fr;
+                grid-auto-rows: auto;
+            }
+            .bento-large, .bento-medium, .bento-small {
+                grid-column: span 1;
+                grid-row: span 1;
+                min-height: 200px;
+            }
+            .bento-large { min-height: 380px; }
+            .product-grid { grid-template-columns: 1fr; max-width: 500px; }
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .roi-timeline { flex-direction: column; align-items: center; }
+            .roi-card { flex: none; width: 100%; max-width: 320px; }
+            .footer-grid { grid-template-columns: 1fr; }
+            nav { padding: 14px 20px; }
+            .hero { padding: 0 20px 60px; }
+            .bento-section, .roi-section, .products-section, .stats-section { padding-left: 20px; padding-right: 20px; }
+            .brand-statement { padding: 120px 20px; }
+            .feature-panel { margin: 40px 20px; padding: 32px 24px; }
+            .cta-content { padding: 32px 20px; }
+            .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+            .hero h1 { font-size: clamp(2.5rem, 10vw, 4rem); }
+            .brand-text { font-size: clamp(1.5rem, 5vw, 2.5rem); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Loader -->
+<div class="loader" id="loader">
+    <div class="loader-logo">L</div>
+</div>
+
+<!-- Page Transition Overlay -->
+<div class="page-transition" id="pageTransition"></div>
+
+<!-- Scroll Progress -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- Custom Cursor -->
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- Navigation -->
+<nav id="mainNav">
+    <div class="nav-left">
+        <div class="nav-logo">L</div>
+        <div class="nav-line"></div>
+        <span class="nav-brand">Luca</span>
+    </div>
+    <ul class="nav-links">
+        <li><a href="index.html" onclick="navigateTo(event, 'index.html')">Home</a></li>
+        <li class="solutions-trigger">
+            <a href="solutions.html" onclick="navigateTo(event, 'solutions.html')">Solutions</a>
+            <div class="mega-menu">
+                <div class="mega-grid">
+                    <a href="home-automation.html" class="mega-item" onclick="navigateTo(event, 'home-automation.html')">
+                        <div class="mega-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+                        <span class="mega-label">Home Automation</span>
+                    </a>
+                    <a href="building-automation.html" class="mega-item" onclick="navigateTo(event, 'building-automation.html')">
+                        <div class="mega-icon"><svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="9" y1="6" x2="9" y2="6.01"/><line x1="15" y1="6" x2="15" y2="6.01"/><line x1="9" y1="10" x2="9" y2="10.01"/><line x1="15" y1="10" x2="15" y2="10.01"/><line x1="9" y1="14" x2="9" y2="14.01"/><line x1="15" y1="14" x2="15" y2="14.01"/></svg></div>
+                        <span class="mega-label">Building Automation</span>
+                    </a>
+                    <a href="urban-intelligence.html" class="mega-item" onclick="navigateTo(event, 'urban-intelligence.html')">
+                        <div class="mega-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7v10l10 5 10-5V7L12 2z"/><line x1="12" y1="22" x2="12" y2="12"/><polyline points="22 7 12 12 2 7"/></svg></div>
+                        <span class="mega-label">Urban Intelligence</span>
+                    </a>
+                    <a href="industrial-automation.html" class="mega-item" onclick="navigateTo(event, 'industrial-automation.html')">
+                        <div class="mega-icon"><svg viewBox="0 0 24 24"><path d="M2 20V8l4-2v6l4-2v6l4-2v6"/><rect x="16" y="4" width="6" height="16" rx="1"/></svg></div>
+                        <span class="mega-label">Industrial</span>
+                    </a>
+                    <a href="agriculture-automation.html" class="mega-item" onclick="navigateTo(event, 'agriculture-automation.html')">
+                        <div class="mega-icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 1 0 20"/><path d="M12 2a10 10 0 0 0 0 20"/><path d="M2 12h20"/><path d="M12 2c2.5 3.5 4 7.5 4 10s-1.5 6.5-4 10"/></svg></div>
+                        <span class="mega-label">Agriculture</span>
+                    </a>
+                    <a href="energy-management.html" class="mega-item" onclick="navigateTo(event, 'energy-management.html')">
+                        <div class="mega-icon"><svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+                        <span class="mega-label">Energy Management</span>
+                    </a>
+                    <a href="security-analytics.html" class="mega-item" onclick="navigateTo(event, 'security-analytics.html')">
+                        <div class="mega-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+                        <span class="mega-label">Security & Analytics</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <li><a href="products.html" onclick="navigateTo(event, 'products.html')">Products</a></li>
+        <li><a href="about.html" onclick="navigateTo(event, 'about.html')">About</a></li>
+        <li><a href="contact.html" onclick="navigateTo(event, 'contact.html')">Contact</a></li>
+    </ul>
+    <a href="contact.html" class="nav-cta" onclick="navigateTo(event, 'contact.html')">Get a Demo</a>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+    <a href="index.html" onclick="navigateTo(event, 'index.html')">Home</a>
+    <a href="solutions.html" onclick="navigateTo(event, 'solutions.html')">Solutions</a>
+    <a href="home-automation.html" onclick="navigateTo(event, 'home-automation.html')">Home Automation</a>
+    <a href="building-automation.html" onclick="navigateTo(event, 'building-automation.html')">Building Automation</a>
+    <a href="urban-intelligence.html" onclick="navigateTo(event, 'urban-intelligence.html')">Urban Intelligence</a>
+    <a href="industrial-automation.html" onclick="navigateTo(event, 'industrial-automation.html')">Industrial</a>
+    <a href="agriculture-automation.html" onclick="navigateTo(event, 'agriculture-automation.html')">Agriculture</a>
+    <a href="energy-management.html" onclick="navigateTo(event, 'energy-management.html')">Energy Management</a>
+    <a href="security-analytics.html" onclick="navigateTo(event, 'security-analytics.html')">Security & Analytics</a>
+    <a href="products.html" onclick="navigateTo(event, 'products.html')">Products</a>
+    <a href="about.html" onclick="navigateTo(event, 'about.html')">About</a>
+    <a href="contact.html" onclick="navigateTo(event, 'contact.html')">Contact</a>
+</div>
+
+<!-- ==================== HERO ==================== -->
+<section class="hero">
+    <div class="hero-img" id="heroImg" style="background-image: url('https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1920&q=85')"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <div class="hero-label">ENERGY MANAGEMENT</div>
+        <h1>Every Watt Measured. Every Dollar Saved.</h1>
+        <p class="hero-sub">Transform energy from an uncontrolled expense into an orchestrated asset with real-time monitoring, AI optimization, and automated control.</p>
+    </div>
+</section>
+
+<!-- ==================== BRAND STATEMENT ==================== -->
+<section class="brand-statement">
+    <p class="brand-text" id="brandText">
+        Energy isn't just consumed. It's orchestrated.
+    </p>
+</section>
+
+<!-- ==================== BENTO DASHBOARD GRID ==================== -->
+<section class="bento-section">
+    <div class="bento-header reveal-up">
+        <div class="section-label">Live Intelligence Dashboard</div>
+        <h2 class="gradient-text">Your Entire Energy Ecosystem at a Glance</h2>
+    </div>
+
+    <div class="bento-grid" id="bentoGrid">
+
+        <!-- LARGE CARD: Animated Bar Chart (span 2x2) -->
+        <div class="bento-card bento-large bento-chart reveal-up" id="chartCard">
+            <div class="bento-chart-title">Weekly Consumption</div>
+            <div class="bento-chart-subtitle">Energy usage in kWh across 7 days</div>
+            <div class="chart-container" id="chartContainer">
+                <div class="chart-bar-wrap">
+                    <div class="chart-bar" style="height: 65%;" data-val="142"><span class="chart-value">142</span></div>
+                    <span class="chart-bar-label">Mon</span>
+                </div>
+                <div class="chart-bar-wrap">
+                    <div class="chart-bar" style="height: 80%;" data-val="178"><span class="chart-value">178</span></div>
+                    <span class="chart-bar-label">Tue</span>
+                </div>
+                <div class="chart-bar-wrap">
+                    <div class="chart-bar" style="height: 55%;" data-val="121"><span class="chart-value">121</span></div>
+                    <span class="chart-bar-label">Wed</span>
+                </div>
+                <div class="chart-bar-wrap">
+                    <div class="chart-bar" style="height: 90%;" data-val="198"><span class="chart-value">198</span></div>
+                    <span class="chart-bar-label">Thu</span>
+                </div>
+                <div class="chart-bar-wrap">
+                    <div class="chart-bar" style="height: 70%;" data-val="156"><span class="chart-value">156</span></div>
+                    <span class="chart-bar-label">Fri</span>
+                </div>
+                <div class="chart-bar-wrap">
+                    <div class="chart-bar" style="height: 40%;" data-val="89"><span class="chart-value">89</span></div>
+                    <span class="chart-bar-label">Sat</span>
+                </div>
+                <div class="chart-bar-wrap">
+                    <div class="chart-bar" style="height: 35%;" data-val="76"><span class="chart-value">76</span></div>
+                    <span class="chart-bar-label">Sun</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- SMALL CARD: 50% Cost Reduction -->
+        <div class="bento-card bento-small bento-stat reveal-up">
+            <div class="stat-number"><span class="counter-value" data-target="50">0</span><span class="stat-suffix">%</span></div>
+            <div class="stat-label">Cost Reduction</div>
+        </div>
+
+        <!-- SMALL CARD: 25% Peak Reduction -->
+        <div class="bento-card bento-small bento-stat reveal-up">
+            <div class="stat-number"><span class="counter-value" data-target="25">0</span><span class="stat-suffix">%</span></div>
+            <div class="stat-label">Peak Reduction</div>
+        </div>
+
+        <!-- MEDIUM CARD: Wave Animation (span 2x1) -->
+        <div class="bento-card bento-medium bento-wave reveal-up">
+            <div class="wave-header">
+                <div>
+                    <div class="wave-title">Real-Time Energy Flow</div>
+                    <div style="display: flex; align-items: baseline; gap: 8px; margin-top: 8px;">
+                        <span class="wave-flow-label">4.7</span>
+                        <span class="wave-flow-unit">kW current draw</span>
+                    </div>
+                </div>
+                <div class="wave-live">
+                    <span class="wave-dot"></span>
+                    LIVE
+                </div>
+            </div>
+            <div class="wave-canvas" id="waveCanvas">
+                <svg class="wave-svg" id="waveSvg" viewBox="0 0 800 100" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="waveGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:rgb(184,211,200);stop-opacity:0.3"/>
+                            <stop offset="100%" style="stop-color:rgb(184,211,200);stop-opacity:0"/>
+                        </linearGradient>
+                    </defs>
+                    <path class="wave-path-fill" id="waveFill"/>
+                    <path class="wave-path" id="waveLine"/>
+                </svg>
+            </div>
+        </div>
+
+        <!-- SMALL CARD: Sun Glow -->
+        <div class="bento-card bento-small bento-sun reveal-up">
+            <div class="sun-glow">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            </div>
+            <div class="sun-label">Solar</div>
+            <div class="sun-status">Generating 3.2 kW</div>
+        </div>
+
+        <!-- LARGE CARD: Temperature Gauge (span 2x2) -->
+        <div class="bento-card bento-large bento-temp reveal-up" id="tempCard">
+            <div class="temp-chart-title">HVAC Zone Temperature</div>
+            <div class="temp-gauge-wrap">
+                <svg class="temp-gauge-svg" viewBox="0 0 180 180">
+                    <circle class="temp-gauge-bg" cx="90" cy="90" r="80"/>
+                    <circle class="temp-gauge-fill" id="tempGaugeFill" cx="90" cy="90" r="80"/>
+                </svg>
+                <div class="temp-value-wrap">
+                    <div class="temp-value">23<span style="font-size: 1.2rem; color: var(--text-tertiary);">&deg;C</span></div>
+                    <div class="temp-unit">Zone A</div>
+                </div>
+            </div>
+            <div class="temp-status-badge">
+                <span class="temp-status-dot"></span>
+                <span class="temp-status-text">Optimal Range</span>
+            </div>
+        </div>
+
+        <!-- SMALL CARD: 18mo ROI -->
+        <div class="bento-card bento-small bento-stat reveal-up">
+            <div class="stat-number"><span class="counter-value" data-target="18">0</span><span class="stat-suffix">mo</span></div>
+            <div class="stat-label">Average ROI</div>
+        </div>
+
+        <!-- SMALL CARD: 500+ Parameters -->
+        <div class="bento-card bento-small bento-stat reveal-up">
+            <div class="stat-number"><span class="counter-value" data-target="500">0</span><span class="stat-suffix">+</span></div>
+            <div class="stat-label">Parameters Monitored</div>
+        </div>
+
+    </div>
+</section>
+
+<!-- ==================== IMAGE BREAKER 1 ==================== -->
+<section class="image-breaker">
+    <div class="image-breaker-img parallax-img" style="background-image: url('https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=1600&q=85')"></div>
+    <div class="image-breaker-overlay"></div>
+</section>
+
+<!-- ==================== FEATURE 1: REAL-TIME METERING ==================== -->
+<section class="feature-section">
+    <div class="feature-bg parallax-img" style="background-image: url('https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1920&q=85')"></div>
+    <div class="feature-overlay"></div>
+    <div class="feature-panel reveal-up">
+        <div class="feature-step">Feature 01</div>
+        <h3>Real-Time Metering</h3>
+        <p>Granular visibility into every circuit, panel, and load. Our smart meters capture consumption data at sub-second intervals, feeding live dashboards that expose waste, anomalies, and optimization opportunities the moment they appear.</p>
+        <ul class="feature-bullets">
+            <li>Circuit-level monitoring with per-device energy attribution</li>
+            <li>Live dashboards with customizable views, alerts, and historical comparison</li>
+            <li>Anomaly detection that flags unusual consumption patterns automatically</li>
+        </ul>
+    </div>
+</section>
+
+<!-- ==================== IMAGE BREAKER 2 ==================== -->
+<section class="image-breaker">
+    <div class="image-breaker-img parallax-img" style="background-image: url('https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?w=1600&q=85')"></div>
+    <div class="image-breaker-overlay"></div>
+</section>
+
+<!-- ==================== FEATURE 2: AI LOAD OPTIMIZATION ==================== -->
+<section class="feature-section">
+    <div class="feature-bg parallax-img" style="background-image: url('https://images.unsplash.com/photo-1518770660439-4636190af475?w=1920&q=85')"></div>
+    <div class="feature-overlay"></div>
+    <div class="feature-panel reveal-up">
+        <div class="feature-step">Feature 02</div>
+        <h3>AI Load Optimization</h3>
+        <p>Machine learning models analyze your consumption patterns, occupancy data, and tariff structures to automatically shift, reduce, and schedule loads for maximum savings. The system gets smarter every day, learning from every watt consumed.</p>
+        <ul class="feature-bullets">
+            <li>Peak shaving that automatically reduces demand during high-tariff periods</li>
+            <li>Demand response integration for utility incentive programs</li>
+            <li>Predictive scheduling that pre-conditions spaces during off-peak hours</li>
+        </ul>
+    </div>
+</section>
+
+<!-- ==================== IMAGE BREAKER 3 ==================== -->
+<section class="image-breaker">
+    <div class="image-breaker-img parallax-img" style="background-image: url('https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=1600&q=85')"></div>
+    <div class="image-breaker-overlay"></div>
+</section>
+
+<!-- ==================== FEATURE 3: SOLAR & RENEWABLE ==================== -->
+<section class="feature-section">
+    <div class="feature-bg parallax-img" style="background-image: url('https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1920&q=85')"></div>
+    <div class="feature-overlay"></div>
+    <div class="feature-panel reveal-up">
+        <div class="feature-step">Feature 03</div>
+        <h3>Solar and Renewable Integration</h3>
+        <p>Seamlessly integrate solar arrays, wind generation, and battery storage into a unified energy management platform. Track generation versus consumption in real time, optimize self-consumption, and manage grid export for maximum return.</p>
+        <ul class="feature-bullets">
+            <li>Real-time generation tracking with performance ratio monitoring</li>
+            <li>Intelligent grid synchronization managing export and import optimization</li>
+            <li>Battery storage management with charge and discharge scheduling</li>
+        </ul>
+    </div>
+</section>
+
+<!-- ==================== IMAGE BREAKER 4 ==================== -->
+<section class="image-breaker">
+    <div class="image-breaker-img parallax-img" style="background-image: url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&q=85')"></div>
+    <div class="image-breaker-overlay"></div>
+</section>
+
+<!-- ==================== FEATURE 4: HVAC ENERGY MANAGEMENT ==================== -->
+<section class="feature-section">
+    <div class="feature-bg parallax-img" style="background-image: url('https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1920&q=85')"></div>
+    <div class="feature-overlay"></div>
+    <div class="feature-panel reveal-up">
+        <div class="feature-step">Feature 04</div>
+        <h3>HVAC Energy Management</h3>
+        <p>HVAC typically accounts for 40-60% of a building's energy consumption. Our zone-level optimization ensures every unit operates at peak efficiency, responding dynamically to occupancy patterns, weather conditions, and thermal load.</p>
+        <ul class="feature-bullets">
+            <li>Zone-level optimization with independent temperature and airflow control</li>
+            <li>Occupancy-based control that reduces cooling and heating in unoccupied zones</li>
+            <li>Efficiency scoring and benchmarking against industry standards</li>
+        </ul>
+    </div>
+</section>
+
+<!-- ==================== ROI TIMELINE ==================== -->
+<section class="roi-section">
+    <div class="roi-header reveal-up">
+        <div class="section-label">Return on Investment</div>
+        <h2 class="gradient-text">The Path to Energy Profit</h2>
+        <p>Every installation follows a proven trajectory from initial deployment to measurable savings to full ROI and beyond.</p>
+    </div>
+    <div class="roi-timeline">
+        <div class="roi-line"></div>
+        <div class="roi-card reveal-up">
+            <div class="roi-dot"></div>
+            <div class="roi-month">Month 1</div>
+            <div class="roi-title">Install and Monitor</div>
+            <div class="roi-desc">Smart meters deployed, baselines established, dashboards live. See where energy is going for the first time.</div>
+        </div>
+        <div class="roi-card reveal-up">
+            <div class="roi-dot"></div>
+            <div class="roi-month">Month 6</div>
+            <div class="roi-title">30% Savings Achieved</div>
+            <div class="roi-desc">AI optimizations active, peak shaving engaged, waste eliminated. Monthly bills drop significantly.</div>
+        </div>
+        <div class="roi-card reveal-up">
+            <div class="roi-dot"></div>
+            <div class="roi-month">Month 12</div>
+            <div class="roi-title">ROI Breakeven</div>
+            <div class="roi-desc">Cumulative savings equal total investment. Everything from here is pure profit on energy costs.</div>
+        </div>
+        <div class="roi-card reveal-up">
+            <div class="roi-dot"></div>
+            <div class="roi-month">Month 18</div>
+            <div class="roi-title">Net Profit</div>
+            <div class="roi-desc">50% sustained cost reduction. System continuously optimizes. Carbon credits and incentives add further value.</div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== IMAGE BREAKER 5 ==================== -->
+<section class="image-breaker">
+    <div class="image-breaker-img parallax-img" style="background-image: url('https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=1600&q=85')"></div>
+    <div class="image-breaker-overlay"></div>
+</section>
+
+<!-- ==================== PRODUCTS ==================== -->
+<section class="products-section">
+    <div class="container" style="text-align: center;">
+        <div class="section-label reveal-up">The Ecosystem</div>
+        <h2 class="gradient-text reveal-up">Hardware That Powers Intelligence</h2>
+        <p style="color: var(--text-secondary); font-size: 1.05rem; font-weight: 300; line-height: 1.8; max-width: 600px; margin: 20px auto 0;" class="reveal-up">Industrial-grade meters, monitors, and controllers engineered for accuracy, reliability, and seamless integration into any electrical infrastructure.</p>
+    </div>
+    <div class="product-grid">
+        <div class="product-card reveal-up">
+            <div class="product-icon">
+                <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <h3>Smart Energy Meter</h3>
+            <p>Bi-directional energy meter with sub-second sampling, power quality analysis, and harmonics detection. RS485, Modbus, and Wi-Fi connectivity. DIN-rail mount.</p>
+        </div>
+        <div class="product-card reveal-up">
+            <div class="product-icon">
+                <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            </div>
+            <h3>Power Monitor</h3>
+            <p>Multi-circuit power monitor supporting up to 42 channels. Current transformers included. Real-time voltage, current, power factor, and energy for every circuit.</p>
+        </div>
+        <div class="product-card reveal-up">
+            <div class="product-icon">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            </div>
+            <h3>Solar Monitor</h3>
+            <p>Dedicated solar inverter monitor tracking generation, performance ratio, string-level analysis, and grid export. Supports all major inverter brands via Modbus.</p>
+        </div>
+        <div class="product-card reveal-up">
+            <div class="product-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 1 0 20"/><path d="M12 2a10 10 0 0 0 0 20"/><path d="M2 12h20"/></svg>
+            </div>
+            <h3>HVAC Controller</h3>
+            <p>BACnet and Modbus compatible HVAC controller with zone-level temperature management. Integrates with VRF, chiller, and split AC systems for unified control.</p>
+        </div>
+        <div class="product-card reveal-up">
+            <div class="product-icon">
+                <svg viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 1 1 7.072 0l-.548.547A3.374 3.374 0 0 0 14 18.469V19a2 2 0 1 1-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+            </div>
+            <h3>Lighting Controller</h3>
+            <p>DALI-2 and 0-10V dimming controller with daylight harvesting, occupancy integration, and scene scheduling. Reduces lighting energy by up to 60%.</p>
+        </div>
+        <div class="product-card reveal-up">
+            <div class="product-icon">
+                <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3"/></svg>
+            </div>
+            <h3>Carbon Analytics Software</h3>
+            <p>Cloud platform for carbon footprint calculation, Scope 1, 2, and 3 tracking, ESG reporting, and sustainability benchmarking. API-first architecture.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== STATS DASHBOARD WIDGETS ==================== -->
+<section class="stats-section">
+    <div class="stats-grid">
+        <div class="stats-widget reveal-up">
+            <div class="stats-number">50<span>%</span></div>
+            <div class="stats-label">Cost Reduction</div>
+        </div>
+        <div class="stats-widget reveal-up">
+            <div class="stats-number">25<span>%</span></div>
+            <div class="stats-label">Peak Reduction</div>
+        </div>
+        <div class="stats-widget reveal-up">
+            <div class="stats-number">18<span>mo</span></div>
+            <div class="stats-label">Average ROI</div>
+        </div>
+        <div class="stats-widget reveal-up">
+            <div class="stats-number">500<span>+</span></div>
+            <div class="stats-label">Parameters Monitored</div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== CTA SECTION ==================== -->
+<section class="cta-section">
+    <div class="cta-bg parallax-img" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1920&q=85')"></div>
+    <div class="cta-overlay"></div>
+    <div class="cta-content reveal-up">
+        <div class="section-label">Get Started</div>
+        <h2 class="gradient-text">Ready to Take Control of Your Energy?</h2>
+        <p>From a single building to a campus-wide deployment, LUCAVERSE energy management scales with your ambition. Let us design a solution that pays for itself.</p>
+        <a href="contact.html" class="cta-btn" onclick="navigateTo(event, 'contact.html')">Request an Energy Audit</a>
+    </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer>
+    <div class="footer-grid">
+        <div>
+            <div class="footer-brand-logo">L</div>
+            <p class="footer-desc">Transforming spaces with intelligent automation. From homes to cities, we bring IoT intelligence to every environment.</p>
+            <div class="footer-social">
+                <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+                <a href="#" aria-label="Twitter"><svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg></a>
+                <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5"/></svg></a>
+            </div>
+        </div>
+        <div class="footer-col">
+            <h4>Solutions</h4>
+            <a href="home-automation.html" onclick="navigateTo(event, 'home-automation.html')">Home Automation</a>
+            <a href="building-automation.html" onclick="navigateTo(event, 'building-automation.html')">Building Automation</a>
+            <a href="urban-intelligence.html" onclick="navigateTo(event, 'urban-intelligence.html')">Urban Intelligence</a>
+            <a href="industrial-automation.html" onclick="navigateTo(event, 'industrial-automation.html')">Industrial</a>
+            <a href="agriculture-automation.html" onclick="navigateTo(event, 'agriculture-automation.html')">Agriculture</a>
+            <a href="energy-management.html" onclick="navigateTo(event, 'energy-management.html')">Energy Management</a>
+            <a href="security-analytics.html" onclick="navigateTo(event, 'security-analytics.html')">Security & Analytics</a>
+        </div>
+        <div class="footer-col">
+            <h4>Company</h4>
+            <a href="about.html" onclick="navigateTo(event, 'about.html')">About Us</a>
+            <a href="products.html" onclick="navigateTo(event, 'products.html')">Products</a>
+            <a href="#">Careers</a>
+            <a href="contact.html" onclick="navigateTo(event, 'contact.html')">Contact</a>
+        </div>
+        <div class="footer-col">
+            <h4>Connect</h4>
+            <p>contact@lucaverse.ai</p>
+            <p>+91 9992-223-890</p>
+            <p>Hyderabad, India</p>
+        </div>
+    </div>
+    <div class="footer-gradient"></div>
+    <div class="footer-bottom">
+        <span class="footer-copy">2026 LUCAVERSE Private Limited. All rights reserved.</span>
+        <div class="footer-legal">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+        </div>
+    </div>
+</footer>
+
+<script>
+(function() {
+    'use strict';
+
+    /* ========== LENIS SMOOTH SCROLL ========== */
+    const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smooth: true });
+    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+    requestAnimationFrame(raf);
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => lenis.raf(time * 1000));
+    gsap.ticker.lagSmoothing(0);
+
+    /* ========== LOADER ========== */
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            gsap.to('#loader', { opacity: 0, duration: 0.6, ease: 'power2.inOut', onComplete: () => {
+                document.getElementById('loader').style.display = 'none';
+            }});
+        }, 1500);
+    });
+
+    /* ========== CUSTOM CURSOR ========== */
+    const ring = document.getElementById('cursorRing');
+    const dot = document.getElementById('cursorDot');
+    if (window.matchMedia('(pointer: fine)').matches) {
+        const ringPos = gsap.quickTo(ring, 'left', { duration: 0.35, ease: 'power3' });
+        const ringPosY = gsap.quickTo(ring, 'top', { duration: 0.35, ease: 'power3' });
+        const dotPos = gsap.quickTo(dot, 'left', { duration: 0.15, ease: 'power3' });
+        const dotPosY = gsap.quickTo(dot, 'top', { duration: 0.15, ease: 'power3' });
+        document.addEventListener('mousemove', (e) => {
+            ringPos(e.clientX); ringPosY(e.clientY);
+            dotPos(e.clientX); dotPosY(e.clientY);
+        });
+        document.querySelectorAll('a, button, .bento-card, .product-card, .stats-widget, .roi-card, .feature-panel').forEach(el => {
+            el.addEventListener('mouseenter', () => ring.classList.add('hover'));
+            el.addEventListener('mouseleave', () => ring.classList.remove('hover'));
+        });
+    }
+
+    /* ========== SCROLL PROGRESS ========== */
+    window.addEventListener('scroll', () => {
+        const h = document.documentElement.scrollHeight - window.innerHeight;
+        const p = (window.scrollY / h) * 100;
+        document.getElementById('scrollProgress').style.width = p + '%';
+    });
+
+    /* ========== NAV SCROLL ========== */
+    const nav = document.getElementById('mainNav');
+    window.addEventListener('scroll', () => {
+        nav.classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    /* ========== HAMBURGER ========== */
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        mobileMenu.classList.toggle('active');
+    });
+
+    /* ========== PAGE TRANSITION ========== */
+    window.navigateTo = function(e, url) {
+        e.preventDefault();
+        const overlay = document.getElementById('pageTransition');
+        overlay.style.pointerEvents = 'auto';
+        gsap.to(overlay, { opacity: 1, duration: 0.4, ease: 'power2.inOut', onComplete: () => {
+            window.location.href = url;
+        }});
+    };
+
+    /* ========== HERO PARALLAX ========== */
+    gsap.to('#heroImg', {
+        y: '30%',
+        ease: 'none',
+        scrollTrigger: {
+            trigger: '.hero',
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 0.5
+        }
+    });
+
+    /* ========== BRAND STATEMENT WORD REVEAL ========== */
+    const brandText = document.getElementById('brandText');
+    const words = brandText.textContent.trim().split(/\s+/);
+    brandText.innerHTML = words.map(w => `<span class="word">${w}</span>`).join('');
+    const wordEls = brandText.querySelectorAll('.word');
+    gsap.to(wordEls, {
+        scrollTrigger: {
+            trigger: '.brand-statement',
+            start: 'top 70%',
+            end: 'bottom 40%',
+            scrub: 0.8
+        },
+        opacity: 1,
+        stagger: 0.1,
+        ease: 'none'
+    });
+
+    /* ========== PARALLAX FOR ALL IMAGE BREAKERS + FEATURE BGs ========== */
+    document.querySelectorAll('.parallax-img').forEach(img => {
+        gsap.to(img, {
+            y: '15%',
+            ease: 'none',
+            scrollTrigger: {
+                trigger: img.parentElement,
+                start: 'top bottom',
+                end: 'bottom top',
+                scrub: 0.5
+            }
+        });
+    });
+
+    /* ========== REVEAL ANIMATIONS ========== */
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                const children = entry.target.querySelectorAll('.reveal-up');
+                children.forEach((child, i) => {
+                    setTimeout(() => child.classList.add('visible'), i * 100);
+                });
+            }
+        });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('.reveal-up').forEach(el => revealObserver.observe(el));
+
+    /* ========== BENTO: ANIMATED BAR CHART ========== */
+    const chartObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const bars = entry.target.querySelectorAll('.chart-bar');
+                bars.forEach((bar, i) => {
+                    setTimeout(() => bar.classList.add('animated'), i * 120);
+                });
+                chartObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.3 });
+    const chartCard = document.getElementById('chartCard');
+    if (chartCard) chartObserver.observe(chartCard);
+
+    /* ========== BENTO: ANIMATED COUNTERS ========== */
+    const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const counters = entry.target.querySelectorAll('.counter-value');
+                counters.forEach(counter => {
+                    const target = parseInt(counter.getAttribute('data-target'));
+                    const duration = 2000;
+                    const start = performance.now();
+                    function tick(now) {
+                        const elapsed = now - start;
+                        const progress = Math.min(elapsed / duration, 1);
+                        const eased = 1 - Math.pow(1 - progress, 3);
+                        counter.textContent = Math.floor(eased * target);
+                        if (progress < 1) requestAnimationFrame(tick);
+                    }
+                    requestAnimationFrame(tick);
+                });
+                counterObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.3 });
+    document.querySelectorAll('.bento-stat').forEach(el => counterObserver.observe(el));
+
+    /* ========== BENTO: WAVE ANIMATION ========== */
+    let waveOffset = 0;
+    function animateWave() {
+        waveOffset += 0.8;
+        const w = 800;
+        const h = 100;
+        let linePath = '';
+        let fillPath = '';
+        const points = [];
+
+        for (let x = 0; x <= w; x += 4) {
+            const y = h * 0.5
+                + Math.sin((x + waveOffset * 3) * 0.015) * 20
+                + Math.sin((x + waveOffset * 2) * 0.025) * 12
+                + Math.sin((x + waveOffset * 5) * 0.008) * 8;
+            points.push({ x, y });
+        }
+
+        linePath = `M ${points[0].x} ${points[0].y}`;
+        for (let i = 1; i < points.length; i++) {
+            linePath += ` L ${points[i].x} ${points[i].y}`;
+        }
+
+        fillPath = linePath + ` L ${w} ${h} L 0 ${h} Z`;
+
+        const waveLine = document.getElementById('waveLine');
+        const waveFill = document.getElementById('waveFill');
+        if (waveLine) waveLine.setAttribute('d', linePath);
+        if (waveFill) waveFill.setAttribute('d', fillPath);
+
+        requestAnimationFrame(animateWave);
+    }
+    animateWave();
+
+    /* ========== BENTO: TEMPERATURE GAUGE ========== */
+    const tempObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const fill = document.getElementById('tempGaugeFill');
+                if (fill) fill.classList.add('animated');
+                tempObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.3 });
+    const tempCard = document.getElementById('tempCard');
+    if (tempCard) tempObserver.observe(tempCard);
+
+    /* ========== SPOTLIGHT CARDS ========== */
+    document.querySelectorAll('.bento-card, .product-card, .stats-widget, .roi-card, .feature-panel').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            card.style.setProperty('--mx', (e.clientX - rect.left) + 'px');
+            card.style.setProperty('--my', (e.clientY - rect.top) + 'px');
+        });
+    });
+
+})();
+</script>
+
+</body>
+</html>
