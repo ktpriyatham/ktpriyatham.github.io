@@ -659,127 +659,6 @@
         }
 
         /* ============================================
-           JOURNEY TIMELINE — Vertical, alternating, glass
-           ============================================ */
-        .timeline-section {
-            padding: 180px 48px;
-            background: var(--black);
-        }
-
-        .timeline-section .label {
-            display: block;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .timeline-section h2 {
-            text-align: center;
-            margin-bottom: 100px;
-        }
-
-        .timeline {
-            max-width: 900px;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        .timeline-line {
-            position: absolute;
-            left: 50%;
-            top: 0;
-            bottom: 0;
-            width: 1px;
-            background: linear-gradient(to bottom, transparent, rgba(184, 211, 200, 0.2), rgba(184, 211, 200, 0.2), transparent);
-            transform: translateX(-50%);
-        }
-
-        .timeline-node {
-            position: relative;
-            padding: 0 0 80px 0;
-            display: flex;
-            align-items: flex-start;
-        }
-
-        .timeline-node:last-child { padding-bottom: 0; }
-
-        .timeline-node:nth-child(odd) {
-            justify-content: flex-start;
-            padding-right: calc(50% + 48px);
-        }
-
-        .timeline-node:nth-child(even) {
-            justify-content: flex-end;
-            padding-left: calc(50% + 48px);
-        }
-
-        .timeline-dot {
-            position: absolute;
-            left: 50%;
-            top: 24px;
-            width: 14px; height: 14px;
-            border-radius: 50%;
-            background: var(--charcoal);
-            border: 2px solid var(--accent);
-            transform: translateX(-50%);
-            z-index: 2;
-            transition: background 0.4s ease, box-shadow 0.4s ease;
-        }
-
-        .timeline-node.revealed .timeline-dot {
-            background: var(--accent);
-            box-shadow: 0 0 12px rgba(184, 211, 200, 0.3);
-        }
-
-        .timeline-card {
-            background: rgba(255,255,255,0.03);
-            backdrop-filter: blur(16px) saturate(180%);
-            -webkit-backdrop-filter: blur(16px) saturate(180%);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 20px;
-            padding: 32px 36px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .timeline-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(400px circle at var(--mx, 50%) var(--my, 50%), rgba(184,211,200,0.06), transparent 40%);
-            opacity: 0;
-            transition: opacity 0.4s;
-            pointer-events: none;
-        }
-
-        .timeline-card:hover::before { opacity: 1; }
-
-        .timeline-node:nth-child(odd) .timeline-card { text-align: right; }
-        .timeline-node:nth-child(even) .timeline-card { text-align: left; }
-
-        .timeline-year {
-            font-size: 0.7rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: var(--accent);
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        .timeline-title {
-            font-size: 1.2rem;
-            font-weight: 400;
-            color: var(--text-primary);
-            margin-bottom: 8px;
-        }
-
-        .timeline-desc {
-            font-size: 0.9rem;
-            color: var(--text-tertiary);
-            line-height: 1.7;
-        }
-
-        /* ============================================
            PARTNERS — Glassmorphism cards
            ============================================ */
         .partners-section {
@@ -1033,16 +912,6 @@
             .stats-bento { grid-template-columns: repeat(2, 1fr); }
             .partners-grid { grid-template-columns: repeat(3, 1fr); }
             .footer-inner { grid-template-columns: 1fr 1fr; gap: 40px; }
-            .timeline-node:nth-child(odd),
-            .timeline-node:nth-child(even) {
-                padding-left: 60px;
-                padding-right: 0;
-                justify-content: flex-start;
-            }
-            .timeline-line { left: 16px; }
-            .timeline-dot { left: 16px; }
-            .timeline-node:nth-child(odd) .timeline-card,
-            .timeline-node:nth-child(even) .timeline-card { text-align: left; }
             .fullbleed-glass-panel { max-width: 100%; }
         }
 
@@ -1050,7 +919,6 @@
             .hero { padding: 140px 24px 80px; }
             .brand-statement-section { padding: 100px 24px; }
             .stats-section { padding: 100px 24px; }
-            .timeline-section { padding: 100px 24px; }
             .partners-section { padding: 100px 24px; }
             .fullbleed-content { padding: 40px 24px; }
             .fullbleed-glass-panel { padding: 32px 28px; }
@@ -1067,7 +935,6 @@
             .brand-statement .word { font-size: clamp(1.5rem, 5vw, 2.5rem); }
             .cta-content { padding: 0 24px; }
             .fullbleed-image-section { height: 60vh; }
-            .timeline-node { padding-bottom: 48px; }
         }
     </style>
 </head>
@@ -1243,82 +1110,9 @@
     <!-- ============================================
          FULL-BLEED IMAGE BREAKER
          ============================================ -->
-    <div class="fullbleed-image-section" style="height: 50vh;" id="breakerSection1">
-        <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1600&q=85" alt="City lights from space" id="breakerImg1">
-        <div class="fullbleed-overlay" style="background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.6));"></div>
-    </div>
-
-    <!-- ============================================
-         JOURNEY TIMELINE
-         ============================================ -->
-    <section class="timeline-section">
-        <span class="label reveal-up">OUR JOURNEY</span>
-        <h2 class="gradient-text reveal-up">The Road So Far</h2>
-        <div class="timeline">
-            <div class="timeline-line"></div>
-
-            <div class="timeline-node reveal-up">
-                <div class="timeline-dot"></div>
-                <div class="timeline-card spotlight-card">
-                    <span class="timeline-year">2018</span>
-                    <div class="timeline-title">IOTIQ Founded</div>
-                    <div class="timeline-desc">The IoT journey begins. Years of hands-on experience building connected systems for enterprises and homes across India.</div>
-                </div>
-            </div>
-
-            <div class="timeline-node reveal-up">
-                <div class="timeline-dot"></div>
-                <div class="timeline-card spotlight-card">
-                    <span class="timeline-year">2020</span>
-                    <div class="timeline-title">100th Project Milestone</div>
-                    <div class="timeline-desc">Crossing a hundred deployments across residential, commercial, and industrial spaces. Patterns emerge. A bigger vision takes shape.</div>
-                </div>
-            </div>
-
-            <div class="timeline-node reveal-up">
-                <div class="timeline-dot"></div>
-                <div class="timeline-card spotlight-card">
-                    <span class="timeline-year">2022</span>
-                    <div class="timeline-title">Smart Cities Expansion</div>
-                    <div class="timeline-desc">Moving beyond individual buildings into urban infrastructure. Smart lighting, environmental monitoring, and city-scale intelligence pilots.</div>
-                </div>
-            </div>
-
-            <div class="timeline-node reveal-up">
-                <div class="timeline-dot"></div>
-                <div class="timeline-card spotlight-card">
-                    <span class="timeline-year">2024</span>
-                    <div class="timeline-title">LUCA Concept Born</div>
-                    <div class="timeline-desc">A vision crystallizes -- one unified platform to bridge home, building, urban, industrial, agriculture, and energy automation under a single intelligence layer.</div>
-                </div>
-            </div>
-
-            <div class="timeline-node reveal-up">
-                <div class="timeline-dot"></div>
-                <div class="timeline-card spotlight-card">
-                    <span class="timeline-year">2025</span>
-                    <div class="timeline-title">Product Development & R&D</div>
-                    <div class="timeline-desc">Deep research and development phase. Hardware prototyping, software architecture, partner integrations, and pilot deployments across verticals.</div>
-                </div>
-            </div>
-
-            <div class="timeline-node reveal-up">
-                <div class="timeline-dot"></div>
-                <div class="timeline-card spotlight-card">
-                    <span class="timeline-year">2026</span>
-                    <div class="timeline-title">LUCAVERSE Incorporated</div>
-                    <div class="timeline-desc">LucaVerse Private Limited is born. From vision to registered company, ready to transform how India -- and the world -- automates its spaces.</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================
-         FULL-BLEED IMAGE BREAKER
-         ============================================ -->
     <div class="fullbleed-image-section" style="height: 50vh;" id="breakerSection2">
-        <img src="https://images.unsplash.com/photo-1518791841217-8f162f1e1131?w=1600&q=85" alt="Technology abstract" id="breakerImg2">
-        <div class="fullbleed-overlay" style="background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.7));"></div>
+        <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1600&q=85" alt="City lights from space" id="breakerImg2">
+        <div class="fullbleed-overlay" style="background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.6));"></div>
     </div>
 
     <!-- ============================================
@@ -1596,20 +1390,6 @@
             });
         });
 
-        // --- TIMELINE GSAP ---
-        document.querySelectorAll('.timeline-node').forEach((node, i) => {
-            gsap.from(node.querySelector('.timeline-card'), {
-                opacity: 0,
-                x: i % 2 === 0 ? -40 : 40,
-                duration: 0.8,
-                ease: 'power2.out',
-                scrollTrigger: {
-                    trigger: node,
-                    start: 'top 80%',
-                    toggleActions: 'play none none none'
-                }
-            });
-        });
     </script>
 </body>
 </html>
